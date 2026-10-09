@@ -24,8 +24,7 @@ export/import for backup.
 
 ## Usage
 
-- **Online:** after enabling GitHub Pages, the app is served at
-  `https://xaas86.github.io/duality-track-calc/`.
+- **Online:** `https://xaas86.github.io/duality-track-calc/`.
 - **Offline:** download `index.html` and open it directly in a browser.
 
 ## Notes and disclaimer
@@ -89,8 +88,7 @@ Sichern/Wiederherstellen per JSON-Export/-Import.
 
 ## Nutzung
 
-- **Online:** nach Aktivierung von GitHub Pages unter
-  `https://xaas86.github.io/duality-track-calc/`.
+- **Online:** `https://xaas86.github.io/duality-track-calc/`.
 - **Offline:** `index.html` herunterladen und direkt im Browser öffnen.
 
 ## Hinweise und Haftung
