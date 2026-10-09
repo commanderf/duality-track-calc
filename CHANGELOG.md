@@ -14,6 +14,8 @@ Derselbe Changelog ist in der App unter „Änderungen" eingeblendet.
 - Klonen des gewählten Teils: wird am freien Ende angesetzt und läuft tangential weiter (bei Geraden identische Ausrichtung; Knopf im Inspector oder Strg+D)
 - Wandplan als PNG exportieren („Bild speichern", auf die Wand zugeschnitten)
 - Wandplan in localStorage und JSON-Export/-Import; der Export markiert die App-Version
+- Filter nach Serie (Original/Evolution) und Form (gerade/gebogen) – gemeinsam für Streifenliste und Wandplaner-Palette
+- Dark Mode mit Umschalter (Sonne/Mond) in der Kopfzeile; gespeichert, Standard folgt der System-Einstellung
 
 ### Geändert
 - Links (Bundle, Einzelprojekte, Designer) als eigener Abschnitt unten auf der Seite; die früheren Kopfzeilen-Links sind entfallen
