@@ -15,6 +15,9 @@ Derselbe Changelog ist in der App unter „Änderungen" eingeblendet.
 - Wandplan als PNG exportieren („Bild speichern", auf die Wand zugeschnitten)
 - Wandplan in localStorage und JSON-Export/-Import; der Export markiert die App-Version
 
+### Geändert
+- Links (Bundle, Einzelprojekte, Designer) als eigener Abschnitt unten auf der Seite; die früheren Kopfzeilen-Links sind entfallen
+
 ### Behoben
 - Wandplaner-Tab zeigte die Streifenliste darüber (`hidden` wurde von `.grid{display:grid}` überstimmt)
 - Ziehen aus der Palette war per Touch nicht möglich (fehlendes `touch-action:none`)

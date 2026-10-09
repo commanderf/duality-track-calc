@@ -32,9 +32,24 @@ export/import for backup.
   Values for a few families may deviate by a small amount – please verify
   before ordering material.
 - The wall planner draws a schematic center line of each track part.
-- Not affiliated with the designer of the track system. The **Duality LED
-  Track System** is a design by *sseitz* on Printables:
-  <https://www.printables.com/model/1365700>.
+- Not affiliated with the designer of the track system – see below.
+
+## Credits
+
+The **Duality Track System Bundle – Original Track and Evolution Pack** is a
+design by **Andy Huot Creations**
+(<https://www.printables.com/@AndyHuot_3193751>). The bundle covers all
+tracks (Original and Evo); the tracks are also available as separate
+projects:
+
+- Bundle – Original Track and Evolution Pack:
+  <https://www.printables.com/model/1637420-duality-track-system-bundle-original-track-and-evo>
+- Track System (Original):
+  <https://www.printables.com/model/1365700-duality-led-track-system>
+- Evolution Pack:
+  <https://www.printables.com/model/1637201-duality-evolution-pack>
+- Skins (Creative Commons):
+  <https://www.printables.com/model/1365694-creative-commons-duality-led-track-system-skins>
 
 ## Versioning
 
@@ -86,9 +101,23 @@ Sichern/Wiederherstellen per JSON-Export/-Import.
   berechnet. Bei einigen Familien können die Werte geringfügig abweichen –
   bitte vor der Materialbestellung prüfen.
 - Der Wandplaner zeichnet eine schematische Mittellinie je Track-Teil.
-- Kein Zusammenhang mit dem Designer des Systems. Das **Duality LED Track
-  System** ist ein Design von *sseitz* auf Printables:
-  <https://www.printables.com/model/1365700>.
+- Kein Zusammenhang mit dem Designer des Systems – siehe unten.
+
+## Danksagung / Credits
+
+Das **Duality Track System Bundle – Original Track and Evolution Pack** ist
+ein Design von **Andy Huot Creations**
+(<https://www.printables.com/@AndyHuot_3193751>). Das Bundle umfasst alle
+Tracks (Original und Evo); die Tracks gibt es auch als einzelne Projekte:
+
+- Bundle – Original Track and Evolution Pack:
+  <https://www.printables.com/model/1637420-duality-track-system-bundle-original-track-and-evo>
+- Track System (Original):
+  <https://www.printables.com/model/1365700-duality-led-track-system>
+- Evolution Pack:
+  <https://www.printables.com/model/1637201-duality-evolution-pack>
+- Skins (Creative Commons):
+  <https://www.printables.com/model/1365694-creative-commons-duality-led-track-system-skins>
 
 ## Versionierung
 

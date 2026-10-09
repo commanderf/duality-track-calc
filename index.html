@@ -18,8 +18,12 @@
   header.top{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
   h1{font-size:22px;margin:0 0 4px}
   .sub{color:var(--muted);font-size:13px}
-  .links a{color:var(--accent);text-decoration:none;font-size:13px;margin-right:12px}
-  .links a:hover{text-decoration:underline}
+  .linkbox{margin-top:18px;font-size:13px}
+  .linkbox h2{font-size:12px;margin:0 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .linkbox ul{margin:0;padding-left:18px}
+  .linkbox li{margin:2px 0}
+  .linkbox a{color:var(--accent);text-decoration:none}
+  .linkbox a:hover{text-decoration:underline}
   .grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
   @media (max-width:900px){.grid{grid-template-columns:1fr}}
   .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
@@ -108,11 +112,6 @@
       <h1>Duality LED Track – Streifenrechner</h1>
       <div class="sub">Pfadlänge (Streifen-Mittellinie) aller Strip-führenden Track-Teile – ohne Reserve und ohne Schneidemarken.</div>
       <div class="sub ver" id="appVersion"></div>
-    </div>
-    <div class="links">
-      <a href="https://www.printables.com/model/1365700-duality-led-track-system" target="_blank" rel="noopener">Track System</a>
-      <a href="https://www.printables.com/model/1637201-duality-evolution-pack" target="_blank" rel="noopener">Evolution Pack</a>
-      <a href="https://www.printables.com/model/1365694-creative-commons-duality-led-track-system-skins" target="_blank" rel="noopener">Skins</a>
     </div>
   </header>
 
@@ -208,6 +207,17 @@
     die Längen für die Auswertung liefert weiterhin die Liste (Streifen-Mittellinie), nicht das gezeichnete Band.
   </footer>
 
+  <section class="linkbox" id="links">
+    <h2>Links</h2>
+    <ul>
+      <li><a href="https://www.printables.com/model/1637420-duality-track-system-bundle-original-track-and-evo" target="_blank" rel="noopener">Duality Track System Bundle – Original Track and Evolution Pack</a></li>
+      <li><a href="https://www.printables.com/model/1365700-duality-led-track-system" target="_blank" rel="noopener">Track System (Original)</a></li>
+      <li><a href="https://www.printables.com/model/1637201-duality-evolution-pack" target="_blank" rel="noopener">Evolution Pack</a></li>
+      <li><a href="https://www.printables.com/model/1365694-creative-commons-duality-led-track-system-skins" target="_blank" rel="noopener">Skins (Creative Commons)</a></li>
+      <li><a href="https://www.printables.com/@AndyHuot_3193751" target="_blank" rel="noopener">Designer: Andy Huot Creations</a></li>
+    </ul>
+  </section>
+
   <details class="changelog" id="changelogBox">
     <summary>Änderungen (Changelog)</summary>
     <div id="changelog"></div>
@@ -236,6 +246,7 @@ const CHANGELOG = [
     'Drehen im Inspector in beide Richtungen (+45° und −45°) – auch für Tablets ohne Tastatur',
     'Klonen des gewählten Teils: wird am freien Ende angesetzt und läuft tangential weiter (bei Geraden identische Ausrichtung; Knopf im Inspector oder Strg+D)',
     'Wandplan als PNG exportieren („Bild speichern", auf die Wand zugeschnitten)',
+    'Links (Bundle, Einzelprojekte, Designer) als Abschnitt unten auf der Seite; die Kopfzeilen-Links sind dorthin gewandert',
     'Wandplan in localStorage und JSON-Export/-Import; Export markiert die App-Version',
     'Behoben: Wandplaner-Tab zeigte die Streifenliste darüber; Ziehen aus der Palette war per Touch nicht möglich'
   ]},
