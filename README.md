@@ -1,0 +1,104 @@
+# Duality LED Track Calculator
+
+A single-file, dependency-free web app to calculate LED strip lengths and
+plan walls for the **Duality LED Track System**.
+
+Open `index.html` in any modern browser – no install, no server, no build
+step. All work is stored locally in your browser (localStorage), with JSON
+export/import for backup.
+
+## Features
+
+- **Strip list** – all 56 strip-carrying track parts with their path length
+  in mm, a selectable quantity, the total length and the remainder against a
+  spool length (default 5 m).
+- **Wall planner** – place parts to scale (35.8 mm wide bands) on a wall:
+  drag & drop, 45° rotation, mirroring and magnetic snapping at free ends.
+  Clone a part so it continues the run tangentially, undo/redo, zoom/pan,
+  wall dimensions and grid, and export the plan as a **PNG image**.
+- **Bill of materials** – turn the wall plan into the quantity table with one
+  click.
+- **JSON export/import** – save or restore the whole configuration.
+
+## Usage
+
+- **Online:** after enabling GitHub Pages, the app is served at
+  `https://commanderf.github.io/duality-track-calc/`.
+- **Offline:** download `index.html` and open it directly in a browser.
+
+## Notes and disclaimer
+
+- Path lengths are calculated from the part names and the provided STL data.
+  Values for a few families may deviate by a small amount – please verify
+  before ordering material.
+- The wall planner draws a schematic center line of each track part.
+- Not affiliated with the designer of the track system. The **Duality LED
+  Track System** is a design by *sseitz* on Printables:
+  <https://www.printables.com/model/1365700>.
+
+## Versioning
+
+The app version (`APP_VERSION`, SemVer with a channel suffix such as
+`-alpha`) is shown in the app footer. The history is kept in the in-app
+"Changes" panel and mirrored in [`CHANGELOG.md`](CHANGELOG.md).
+
+## License
+
+Licensed under **Creative Commons Attribution-NonCommercial 4.0
+International (CC BY-NC 4.0)** – free to use, share and adapt for
+non-commercial purposes with attribution. Commercial use is not permitted.
+See [`LICENSE`](LICENSE).
+
+---
+
+# Duality LED Track Calculator (Deutsch)
+
+Eine einzige, abhängigkeitsfreie HTML-Datei zum Berechnen von
+LED-Streifenlängen und zum Planen von Wänden für das **Duality LED Track
+System**.
+
+`index.html` in einem modernen Browser öffnen – keine Installation, kein
+Server, kein Build. Alle Daten bleiben lokal im Browser (localStorage),
+Sichern/Wiederherstellen per JSON-Export/-Import.
+
+## Funktionen
+
+- **Streifenliste** – alle 56 streifenführenden Track-Teile mit Pfadlänge in
+  mm, wählbarer Menge, Gesamtlänge und Rest gegenüber einer Rollenlänge
+  (Standard 5 m).
+- **Wandplaner** – Teile maßstäblich (35,8 mm breite Bänder) auf eine Wand
+  legen: Drag & Drop, 45°-Drehung, Spiegeln und Magnet-Snapping an freien
+  Enden. Klonen setzt ein Teil tangential fort, Rückgängig/Wiederholen,
+  Zoom/Pan, Wandmaße und Raster, Export des Plans als **PNG-Bild**.
+- **Stückliste** – den Wandplan mit einem Klick in die Mengentabelle
+  übernehmen.
+- **JSON-Export/-Import** – die gesamte Konfiguration sichern/wiederherstellen.
+
+## Nutzung
+
+- **Online:** nach Aktivierung von GitHub Pages unter
+  `https://commanderf.github.io/duality-track-calc/`.
+- **Offline:** `index.html` herunterladen und direkt im Browser öffnen.
+
+## Hinweise und Haftung
+
+- Die Pfadlängen werden aus den Dateinamen und den bereitgestellten STL-Daten
+  berechnet. Bei einigen Familien können die Werte geringfügig abweichen –
+  bitte vor der Materialbestellung prüfen.
+- Der Wandplaner zeichnet eine schematische Mittellinie je Track-Teil.
+- Kein Zusammenhang mit dem Designer des Systems. Das **Duality LED Track
+  System** ist ein Design von *sseitz* auf Printables:
+  <https://www.printables.com/model/1365700>.
+
+## Versionierung
+
+Die App-Version (`APP_VERSION`, SemVer mit Kanal-Suffix, z. B. `-alpha`)
+steht im Footer der App. Die Historie liegt im „Änderungen"-Bereich der App
+und gespiegelt in [`CHANGELOG.md`](CHANGELOG.md).
+
+## Lizenz
+
+Lizenziert unter **Creative Commons Namensnennung – Nicht kommerziell 4.0
+International (CC BY-NC 4.0)** – kostenlose Nutzung, Weitergabe und
+Bearbeitung für nicht-kommerzielle Zwecke mit Namensnennung. Kommerzielle
+Nutzung ist nicht gestattet. Siehe [`LICENSE`](LICENSE).
