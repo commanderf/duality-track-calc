@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duality LED Track – Streifenrechner</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#ffffff; --line:#dfe3e8; --ink:#1c2128; --muted:#667085;
+    --accent:#2f6feb; --accent-soft:#e8f0fe; --ok:#1a7f37; --ok-soft:#e6f4ea;
+    --warn:#b54708; --warn-soft:#fef3e0; --miss:#c4320a; --miss-soft:#ffebe6;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+  header.top{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px}
+  .links a{color:var(--accent);text-decoration:none;font-size:13px;margin-right:12px}
+  .links a:hover{text-decoration:underline}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card h2{font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 12px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+  input[type=search]{flex:1;min-width:150px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:14px}
+  button{font:inherit;font-size:13px;padding:6px 11px;border:1px solid var(--line);background:#fff;
+    border-radius:7px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{filter:brightness(1.08);color:#fff}
+  .cat{margin:16px 0 6px;font-size:13px;font-weight:600;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line);padding-bottom:4px}
+  .row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed #eef0f3}
+  .row:last-child{border-bottom:none}
+  .lbl{flex:1;min-width:0}
+  .lbl b{font-weight:600;font-size:14px}
+  .lbl .file{display:block;color:var(--muted);font-size:11px;font-family:ui-monospace,Menlo,Consolas,monospace;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .badge{font-size:11px;padding:1px 7px;border-radius:999px;white-space:nowrap;font-weight:600}
+  .badge.ok{background:var(--ok-soft);color:var(--ok)}
+  .badge.est{background:var(--warn-soft);color:var(--warn)}
+  .badge.miss{background:var(--miss-soft);color:var(--miss)}
+  .mm{width:74px;padding:5px 6px;border:1px solid var(--line);border-radius:6px;font-size:13px;text-align:right}
+  .mmval{width:74px;text-align:right;font-variant-numeric:tabular-nums;font-size:14px}
+  .qty{display:flex;align-items:center;gap:4px}
+  .qty input{width:56px;padding:5px 6px;border:1px solid var(--line);border-radius:6px;font-size:14px;text-align:right}
+  .qty button{width:28px;padding:4px 0;text-align:center;line-height:1}
+  .pick{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px dashed #eef0f3;font-size:14px}
+  .pick:last-of-type{border-bottom:none}
+  .pick .sub2{color:var(--muted);font-size:12px}
+  .pick .tot{font-variant-numeric:tabular-nums;font-weight:600;min-width:74px;text-align:right}
+  .field{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .field label{font-size:14px}
+  .field input{width:110px;padding:7px 9px;border:1px solid var(--line);border-radius:7px;font-size:15px;text-align:right}
+  .sum{background:var(--accent-soft);border:1px solid #c9dafc;border-radius:9px;padding:12px 14px;margin-top:14px}
+  .sum .big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+  .sum .line{font-size:14px;margin-top:6px}
+  .sum .warnline{color:var(--miss);font-weight:600;margin-top:6px}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .note{font-size:12px;color:var(--muted);margin-top:10px}
+  .empty{color:var(--muted);font-size:14px;padding:8px 0}
+  footer{margin-top:22px;font-size:12px;color:var(--muted)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1c2128;color:#fff;
+    padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s}
+  .toast.show{opacity:1}
+
+  /* ---- Wandplaner ---- */
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tab{font:inherit;font-size:14px;padding:7px 16px;border:1px solid var(--line);border-radius:8px;
+    background:#eceef1;cursor:pointer;color:var(--muted)}
+  .tab:hover{color:var(--accent)}
+  .tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .pgrid{display:grid;grid-template-columns:236px minmax(0,1fr) 268px;gap:14px;align-items:start}
+  @media (max-width:1050px){.pgrid{grid-template-columns:1fr}}
+  .paclist{max-height:560px;overflow:auto;margin-top:8px}
+  .palitem{display:flex;align-items:center;gap:8px;padding:5px 7px;border:1px solid transparent;
+    border-radius:7px;cursor:grab;font-size:13px;user-select:none;touch-action:none;
+    -webkit-user-select:none;-webkit-touch-callout:none}
+  .palitem:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .palitem .file2{color:var(--muted);font-size:10px;font-family:ui-monospace,Menlo,Consolas,monospace;
+    margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:92px}
+  .dot{width:10px;height:10px;border-radius:3px;flex:none}
+  #planCanvas{width:100%;height:560px;display:block;background:#eef0f3;border:1px solid var(--line);
+    border-radius:9px;touch-action:none;cursor:default;-webkit-user-select:none;-webkit-touch-callout:none}
+  .hint{font-size:12px;color:var(--muted);margin-top:8px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:12px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .insp .irow{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:3px 0}
+  .insp .irow b{font-weight:600}
+  .insp .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .ver{font-size:12px;margin-top:3px}
+  .changelog{margin-top:18px;font-size:13px}
+  .changelog summary{cursor:pointer;color:var(--accent);font-weight:600}
+  .changelog h4{margin:12px 0 4px;font-size:13px}
+  .changelog h4 time{color:var(--muted);font-weight:400;font-size:12px;margin-left:6px}
+  .changelog ul{margin:0;padding-left:18px}
+  body.dragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>Duality LED Track – Streifenrechner</h1>
+      <div class="sub">Pfadlänge (Streifen-Mittellinie) aller Strip-führenden Track-Teile – ohne Reserve und ohne Schneidemarken.</div>
+      <div class="sub ver" id="appVersion"></div>
+    </div>
+    <div class="links">
+      <a href="https://www.printables.com/model/1365700-duality-led-track-system" target="_blank" rel="noopener">Track System</a>
+      <a href="https://www.printables.com/model/1637201-duality-evolution-pack" target="_blank" rel="noopener">Evolution Pack</a>
+      <a href="https://www.printables.com/model/1365694-creative-commons-duality-led-track-system-skins" target="_blank" rel="noopener">Skins</a>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" id="tabList">Streifenliste</button>
+    <button class="tab" id="tabPlan">Wandplaner</button>
+  </div>
+
+  <div class="grid" id="viewList">
+
+    <section class="card">
+      <h2>Teile auswählen</h2>
+      <div class="toolbar">
+        <input type="search" id="filter" placeholder="Suchen (z. B. 90, tangent, base) …">
+        <label style="font-size:13px;display:flex;gap:6px;align-items:center;white-space:nowrap">
+          <input type="checkbox" id="editMode"> Maße editieren
+        </label>
+      </div>
+      <div id="catalog"></div>
+      <div class="note">Zubehör ohne Strip (Skins, Splice-Blocks, Mounts, Light-Couplings) ist bewusst nicht enthalten.</div>
+    </section>
+
+    <aside class="card">
+      <h2>Auswahl &amp; Auswertung</h2>
+
+      <div class="field">
+        <label for="stripM">Verfügbare Streifenlänge (m)</label>
+        <input type="number" id="stripM" min="0" step="0.1" value="5">
+      </div>
+
+      <div id="picked"></div>
+
+      <div class="sum">
+        <div class="big" id="totalTxt">0,00 m</div>
+        <div class="line" id="mmTxt">0 mm</div>
+        <div class="line" id="restTxt">–</div>
+        <div id="missTxt"></div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="btnExport">JSON speichern</button>
+        <button id="btnImport">JSON laden</button>
+        <button id="btnReset">Zurücksetzen</button>
+        <input type="file" id="fileInput" accept="application/json,.json" hidden>
+      </div>
+      <div class="note">Der Plan wird automatisch im Browser gespeichert. Mit „JSON speichern“ als Datei exportieren und später wieder laden.</div>
+    </aside>
+
+  </div>
+
+  <section class="card" id="viewPlan" hidden>
+    <h2>Wandplaner</h2>
+    <div class="pgrid">
+
+      <div class="pal">
+        <input type="search" id="palFilter" placeholder="Teile suchen (z. B. 90, tangent) …">
+        <div class="paclist" id="palList"></div>
+      </div>
+
+      <div class="pmain">
+        <div class="toolbar">
+          <label style="font-size:13px;display:flex;gap:6px;align-items:center">Wand
+            <input class="mm" type="number" id="wallW" min="200" step="50" style="width:80px"> ×
+            <input class="mm" type="number" id="wallH" min="200" step="50" style="width:80px"> mm
+          </label>
+          <label style="font-size:13px;display:flex;gap:6px;align-items:center;white-space:nowrap">
+            <input type="checkbox" id="gridOn" checked> Raster
+          </label>
+          <button id="btnFit">Ansicht einpassen</button>
+          <button id="btnUndo">Rückgängig</button>
+          <button id="btnPlanImg">Bild speichern</button>
+          <button id="btnPlanClear">Plan leeren</button>
+          <button class="primary" id="btnAdopt">Plan als Stückliste</button>
+        </div>
+        <canvas id="planCanvas"></canvas>
+        <div class="hint">Teil aus der Palette auf die Wand ziehen. Magnet rastet an freien Endpunkten ein
+          (<b>Shift</b> = ohne Magnet). Tasten: <b>R</b>/<b>Shift+R</b> drehen, <b>F</b> spiegeln,
+          <b>Entf</b> löschen, <b>Strg+Z</b> rückgängig. Leerer Bereich: Ziehen = verschieben, Klick = Auswahl aufheben,
+          Mausrad = Zoom. Am Tablet: Klonen, Drehen (±45°), Spiegeln und Löschen über die Knöpfe im Inspector.</div>
+        <div class="sum" id="planSum"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div class="insp" id="inspector"></div>
+
+    </div>
+  </section>
+
+  <footer>
+    Berechnung: Länge der Linie, auf der der Streifen im Kanal liegt. Gerade = Nennmaß aus dem Dateinamen,
+    Kurven/Winkelteile = gemessene Pfadlänge aus der STL-Geometrie. Teile ohne Wert („Maß fehlt“) gehen nicht in die Summe ein.
+    Im Wandplaner werden die Teile schematisch als Mittellinie (Kern des Kanals) mit 35,8 mm Bandbreite gezeichnet;
+    die Längen für die Auswertung liefert weiterhin die Liste (Streifen-Mittellinie), nicht das gezeichnete Band.
+  </footer>
+
+  <details class="changelog" id="changelogBox">
+    <summary>Änderungen (Changelog)</summary>
+    <div id="changelog"></div>
+  </details>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATS = [
+  {id:'gerade',    label:'Gerade'},
+  {id:'ende',      label:'Enden, Base & Intermediate'},
+  {id:'kurve',     label:'Kurven 45°/90°'},
+  {id:'hoehen',    label:'Höhenwechsel (up/down)'},
+  {id:'verbinder', label:'Tee & Cross'},
+  {id:'vitality',  label:'Vitality (Evolution)'}
+];
+
+// Versionierung (SemVer + Kanal-Suffix); oberster Eintrag == APP_VERSION, prüft check.js.
+const APP_VERSION = '0.2.0-alpha';
+const CHANGELOG = [
+  {version:'0.2.0-alpha', date:'2026-10-09', items:[
+    'Wandplaner als zweiter Tab: Teile per Drag & Drop auf eine Wand, maßstäbliche Bänder (35,8 mm), Wandmaße und 50-mm-Raster',
+    'Magnet-Snapping an freien Endpunkten (45°-Raster), Shift schaltet den Magnet ab',
+    'Drehen (R/Shift+R), Spiegeln (F), Löschen (Entf), Rückgängig (Strg+Z), Zoom/Pan, Inspector, „Plan als Stückliste"',
+    'Drehen im Inspector in beide Richtungen (+45° und −45°) – auch für Tablets ohne Tastatur',
+    'Klonen des gewählten Teils: wird am freien Ende angesetzt und läuft tangential weiter (bei Geraden identische Ausrichtung; Knopf im Inspector oder Strg+D)',
+    'Wandplan als PNG exportieren („Bild speichern", auf die Wand zugeschnitten)',
+    'Wandplan in localStorage und JSON-Export/-Import; Export markiert die App-Version',
+    'Behoben: Wandplaner-Tab zeigte die Streifenliste darüber; Ziehen aus der Palette war per Touch nicht möglich'
+  ]},
+  {version:'0.1.0', date:'2026-10-08', items:[
+    'Erste Version: Streifenrechner aller 56 strip-führenden Teile mit Pfadlänge, Auswahl, Summe/Rollen-Rest, JSON-Export/-Import'
+  ]}
+];
+function verLabel(v){
+  return String(v).replace(/-alpha$/i, ' · Alpha').replace(/-beta$/i, ' · Beta')
+    .replace(/-rc\d*$/i, m => ' · ' + m.slice(1).toUpperCase());
+}
+function renderChangelog(){
+  const verEl = document.getElementById('appVersion');
+  if(verEl) verEl.textContent = 'Version ' + verLabel(APP_VERSION);
+  const el = document.getElementById('changelog');
+  if(!el) return;
+  el.innerHTML = CHANGELOG.map(e=>
+    `<h4>v${e.version} <time>${e.date}</time></h4><ul>` +
+    e.items.map(i=>`<li>${i}</li>`).join('') + '</ul>').join('');
+}
+
+const P = (id,label,cat,file,mm,src) => ({id,label,cat,file,mm:mm===undefined?null:mm,src:src||'offen'});
+
+const PARTS = [
+  P('straight_94',   'Straight 94',            'gerade','track_straight_94.stl',   94,'name'),
+  P('straight_100',  'Straight 100',           'gerade','track_straight_100.stl', 100,'name'),
+  P('straight_112',  'Straight 112',           'gerade','track_straight_112.stl', 112,'name'),
+  P('straight_150',  'Straight 150',           'gerade','track_straight_150.stl', 150,'name'),
+  P('straight_200',  'Straight 200',           'gerade','track_straight_200.stl', 200,'name'),
+  P('straight_250',  'Straight 250',           'gerade','track_straight_250.stl', 250,'name'),
+  P('straight_272',  'Straight 272 (Evo)',     'gerade','track_straight_272.stl', 272,'name'),
+  P('straight_300',  'Straight 300',           'gerade','track_straight_300.stl', 300,'name'),
+  P('straight_350',  'Straight 350',           'gerade','track_straight_350.stl', 350,'name'),
+  P('straight_400',  'Straight 400',           'gerade','track_straight_400.stl', 400,'name'),
+
+  P('end_100',       'End 100',                'ende','track_end_100.stl',             100,'name'),
+  P('end_150',       'End 150',                'ende','track_end_150.stl',             150,'name'),
+  P('end_200',       'End 200',                'ende','track_end_200.stl',             200,'name'),
+  P('end_250',       'End 250',                'ende','track_end_250.stl',             250,'name'),
+  P('end_300',       'End 300',                'ende','track_end_300.stl',             300,'name'),
+  P('end_350',       'End 350',                'ende','track_end_350.stl',             350,'name'),
+  P('end_400',       'End 400',                'ende','track_end_400.stl',             400,'name'),
+  P('base_150',      'Base 150',               'ende','track_base_150.stl',            150,'name'),
+  P('base_200',      'Base 200',               'ende','track_base_200.stl',            200,'name'),
+  P('base_250',      'Base 250',               'ende','track_base_250.stl',            250,'name'),
+  P('base_300',      'Base 300',               'ende','track_base_300.stl',            300,'name'),
+  P('base_350',      'Base 350',               'ende','track_base_350.stl',            350,'name'),
+  P('base_400',      'Base 400',               'ende','track_base_400.stl',            400,'name'),
+  P('intbase_200',   'Intermediate Base 200',  'ende','track_intermediatebase_200.stl', 200,'name'),
+  P('intbase_250',   'Intermediate Base 250',  'ende','track_intermediatebase_250.stl', 250,'name'),
+  P('intbase_300',   'Intermediate Base 300',  'ende','track_intermediatebase_300.stl', 300,'name'),
+
+  P('curve_45_150',  'Kurve 45° (150)',        'kurve','track_45_150.stl', 145.3,'stl'),
+  P('curve_45_250',  'Kurve 45° (250)',        'kurve','track_45_250.stl', 245.3,'stl'),
+  P('curve_90_150',  'Kurve 90° (150)',        'kurve','track_90_150.stl', 140.6,'stl'),
+  P('curve_90_250',  'Kurve 90° (250)',        'kurve','track_90_250.stl', 240.6,'stl'),
+  P('tang_45_r100',  'Tangent 45° r100',       'kurve','e_tangent_45_r100.stl', 78.6,'stl'),
+  P('tang_45_r175',  'Tangent 45° r175',       'kurve','e_tangent_45_r175.stl', 137.5,'stl'),
+  P('tang_45_r225',  'Tangent 45° r225',       'kurve','e_tangent_45_r225.stl', 176.7,'stl'),
+  P('tang_90_r100',  'Tangent 90° r100',       'kurve','e_tangent_90_r100.stl', 157.1,'stl'),
+  P('tang_90_r175',  'Tangent 90° r175',       'kurve','e_tangent_90_r175.stl', 274.9,'stl'),
+  P('tang_90_r225',  'Tangent 90° r225',       'kurve','e_tangent_90_r225.stl', 353.4,'stl'),
+  P('e707_45_in',    '707 45° inside',         'kurve','e_707_45_intside.stl', 135.1,'stl'),
+  P('e707_45_out',   '707 45° outside',        'kurve','e_707_45_outside.stl', 113.9,'stl'),
+  P('e707_90_in',    '707 90° inside',         'kurve','e_707_90_inside.stl', 116.2,'stl'),
+  P('e707_90_out',   '707 90° outside',        'kurve','e_707_90_outside.stl', 115.5,'stl'),
+
+  P('up_45_100',     'Up 45° (100)',           'hoehen','track_up_45_100.stl', 201.6,'stl'),
+  P('up_90_100',     'Up 90° (100)',           'hoehen','track_up_90_100.stl', 199.2,'stl'),
+  P('down_45_100',   'Down 45° (100)',         'hoehen','track_down_45_100.stl', 98.5,'stl'),
+  P('down_90_100',   'Down 90° (100)',         'hoehen','track_down_90_100.stl', 100.9,'stl'),
+
+  P('tee_150',       'Tee 150',                'verbinder','track_tee_150.stl', 264.2,'stl'),
+  P('cross_150',     'Cross 150',              'verbinder','track_cross_150.stl', 264.2,'stl'),
+
+  P('vit_a_135',     'Vitality A 135',         'vitality','track_vitality_a_135.stl', 316.4,'stl'),
+  P('vit_a_675',     'Vitality A 675',         'vitality','track_vitality_a_675.stl', 196.5,'stl'),
+  P('vit_b_1425',    'Vitality B 1425',        'vitality','track_vitality_b_1425.stl', 307.5,'stl'),
+  P('vit_b_7125',    'Vitality B 7125',        'vitality','track_vitality_b_7125.stl', 195.8,'stl'),
+  P('vit_c_75',      'Vitality C 75',          'vitality','track_vitality_c_75.stl', 195.1,'stl'),
+  P('vit_c_150',     'Vitality C 150',         'vitality','track_vitality_c_150.stl', 293.7,'stl'),
+  P('vit_d_1575',    'Vitality D 1575',        'vitality','track_vitality_d_1575.stl', 270.2,'stl'),
+  P('vit_d_7875',    'Vitality D 7875',        'vitality','track_vitality_d_7875.stl', 194.1,'stl'),
+  P('vit_e_165',     'Vitality E 165',         'vitality','track_vitality_e_165.stl', 302.4,'stl'),
+  P('vit_e_825',     'Vitality E 825',         'vitality','track_vitality_e_825.stl', 193.1,'stl')
+];
+
+// <geo>
+// Schematische Mittellinien (Kern) der Track-Teile für den Wandplaner – rein, DOM-frei.
+// Lokales Koordinatensystem: Eintritt bei (0,0), erste Richtung +x. y zeigt in die Wand-Höhe.
+// shapeOf liefert die Kern-Pfade; die Länge im Band (Streifen-Mittellinie) ist mm und weicht
+// beim Knick um 2·d·tan(α/2) ab (d=4,7 mm in der 35,8er-, d=8,9 mm in der 21,8er-Ebene).
+const VIT_ANG = {vit_a_135:135, vit_a_675:67.5, vit_b_1425:142.5, vit_b_7125:71.25,
+                 vit_c_150:150, vit_c_75:75, vit_d_1575:157.5, vit_d_7875:78.75,
+                 vit_e_165:165, vit_e_825:82.5};
+const SPINE = {up_45_100:194.2, up_90_100:181.4, down_45_100:93.0, down_90_100:118.6};
+
+function norm360(a){ return ((a % 360) + 360) % 360; }
+function nennmass(p){ const m = /_(\d+)\.stl$/.exec(p.file); return m ? Number(m[1]) : null; }
+function dirOf(a, b){ return norm360(Math.atan2(b[1]-a[1], b[0]-a[0]) * 180 / Math.PI); }
+function polyLen(pts){
+  let L = 0;
+  for(let i=1; i<pts.length; i++) L += Math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1]);
+  return L;
+}
+// Vektor lokal → Welt: erst Spiegeln (y→−y), dann Drehung (Mathe-Frame, y nach oben), dann Verschiebung.
+function xfG(x, y, ox, oy, rot, flip){
+  const yy = flip ? -y : y;
+  const r = rot * Math.PI/180, c = Math.cos(r), s = Math.sin(r);
+  return [ox + x*c - yy*s, oy + x*s + yy*c];
+}
+// Kreisbogen ab (0,0) in +x, Zentrum (0,r); positiver Winkel dreht nach +y.
+function arcPts(r, aDeg){
+  const n = Math.max(4, Math.ceil(Math.abs(aDeg)/5)), pts = [];
+  for(let i=0; i<=n; i++){
+    const t = (aDeg*Math.PI/180) * i/n;
+    pts.push([r*Math.sin(t), r*(1-Math.cos(t))]);
+  }
+  return pts;
+}
+// Spitzer Knick mit zwei Beinen, ab (0,0) in +x, Knickwinkel aDeg (positiv = nach +y).
+function elbowPts(l1, l2, aDeg){
+  const rad = aDeg*Math.PI/180;
+  return [[0,0], [l1,0], [l1 + l2*Math.cos(rad), l2*Math.sin(rad)]];
+}
+function shapeOf(p, mm){
+  const m = (mm===null || mm===undefined || !Number.isFinite(mm)) ? (nennmass(p) || 0) : mm;
+  const id = p.id;
+  const one = pts => ({paths:[pts], exitAng:dirOf(pts[pts.length-2], pts[pts.length-1]), len:polyLen(pts)});
+
+  if(p.cat === 'gerade' || p.cat === 'ende') return one([[0,0],[m,0]]);
+
+  if(id.startsWith('curve_')){
+    const a = Number(/curve_(\d+)_/.exec(id)[1]), l = (nennmass(p) || m)/2;
+    return one(elbowPts(l, l, a));
+  }
+  if(id.startsWith('tang_')){
+    const q = /tang_(\d+)_r(\d+)/.exec(id);
+    return one(arcPts(Number(q[2]), Number(q[1])));
+  }
+  if(id.startsWith('e707_')){
+    const a = Number(/e707_(\d+)_/.exec(id)[1]), l = m/2;
+    return one(elbowPts(l, l, a));
+  }
+  if(id.startsWith('up_') || id.startsWith('down_')){
+    const a = Number(/_(\d+)_100$/.exec(id)[1]), l = SPINE[id]/2;
+    return one(elbowPts(l, l, a));
+  }
+  if(p.cat === 'vitality'){
+    const a = VIT_ANG[id], sp = m + 2*4.7*Math.tan(a/2*Math.PI/180), l = sp/2;
+    return one(elbowPts(l, l, a));
+  }
+  if(id === 'tee_150'){
+    const paths = [[[0,0],[150,0]], [[75,17.9],[75,132.1]]];
+    return {paths, exitAng:0, len:polyLen(paths[0]) + polyLen(paths[1])};
+  }
+  if(id === 'cross_150'){
+    const paths = [[[0,0],[150,0]], [[75,-17.9],[75,-75]], [[75,17.9],[75,75]]];
+    return {paths, exitAng:0, len:paths.reduce((s, q)=>s+polyLen(q), 0)};
+  }
+  return one([[0,0],[m,0]]);
+}
+// Endpunkte mit "Link"-Richtung = Richtung vom Endpunkt in das Teil hinein (Eintritt: Pfadrichtung, Austritt: +180°).
+function snapPoints(sh){
+  const out = [];
+  for(const pts of sh.paths){
+    if(pts.length < 2) continue;
+    out.push({x:pts[0][0], y:pts[0][1], dir:dirOf(pts[0], pts[1])});
+    const n = pts.length;
+    out.push({x:pts[n-1][0], y:pts[n-1][1], dir:norm360(dirOf(pts[n-2], pts[n-1]) + 180)});
+  }
+  return out;
+}
+function centroidOf(sh){
+  let x0=Infinity, y0=Infinity, x1=-Infinity, y1=-Infinity;
+  for(const pts of sh.paths) for(const q of pts){
+    if(q[0]<x0) x0=q[0]; if(q[0]>x1) x1=q[0];
+    if(q[1]<y0) y0=q[1]; if(q[1]>y1) y1=q[1];
+  }
+  return {x:(x0+x1)/2, y:(y0+y1)/2};
+}
+// Nächstes freies Ziel-Endpunkt-Snapping. targets: [{x,y,dir,free}], mine: lokale Snappoints.
+// Liefert {d, ti, ei, rot, x, y} oder null. Verbindung erfüllt Link_A = Link_Ziel + 180°.
+function pickSnap(targets, mine, rot, flip, ox, oy, radius){
+  let best = null;
+  for(let ti=0; ti<targets.length; ti++){
+    const T = targets[ti];
+    if(!T.free) continue;
+    for(let ei=0; ei<mine.length; ei++){
+      const E = mine[ei];
+      const w = xfG(E.x, E.y, ox, oy, rot, flip);
+      const d = Math.hypot(w[0]-T.x, w[1]-T.y);
+      if(d > radius) continue;
+      if(!best || d < best.d){
+        const tL = flip ? -E.dir : E.dir;
+        best = {d, ti, ei, rot:norm360(Math.round((T.dir + 180 - tL)/45)*45), x:T.x, y:T.y};
+      }
+    }
+  }
+  return best;
+}
+// </geo>
+
+const STORE = 'duality-streifenrechner-v1';
+let state = {stripM:5, qty:{}, override:{}, edit:false, tab:'list', plan:null};
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE);
+    if(raw){ const s = JSON.parse(raw);
+      if(s && typeof s==='object'){
+        state.stripM = typeof s.stripM==='number' ? s.stripM : 5;
+        state.qty = s.qty && typeof s.qty==='object' ? s.qty : {};
+        state.override = s.override && typeof s.override==='object' ? s.override : {};
+        state.tab = s.tab === 'plan' ? 'plan' : 'list';
+        state.plan = sanitizePlan(s.plan);
+      }
+    }
+  }catch(e){}
+  if(!state.plan) state.plan = sanitizePlan(null);
+}
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+const byId = Object.fromEntries(PARTS.map(p=>[p.id,p]));
+function mmOf(p){ const o = state.override[p.id]; return (o===undefined||o===null||o==='') ? p.mm : Number(o); }
+function fmt(n,d){ return n.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+
+function badge(p){
+  const v = mmOf(p);
+  if(v===null || Number.isNaN(v)) return '<span class="badge miss">Maß fehlt</span>';
+  if(state.override[p.id]!==undefined && state.override[p.id]!==null && state.override[p.id]!=='')
+    return '<span class="badge est">eigener Wert</span>';
+  if(p.src==='stl') return '<span class="badge ok">aus STL</span>';
+  if(p.src==='name') return '<span class="badge ok">aus Name</span>';
+  return '<span class="badge est">vorläufig</span>';
+}
+
+function renderCatalog(){
+  const q = document.getElementById('filter').value.trim().toLowerCase();
+  const edit = state.edit;
+  let html = '';
+  for(const c of CATS){
+    const rows = PARTS.filter(p=>p.cat===c.id &&
+      (!q || (p.label+' '+p.file).toLowerCase().includes(q)));
+    if(!rows.length) continue;
+    html += `<div class="cat">${c.label}</div>`;
+    for(const p of rows){
+      const v = mmOf(p);
+      const valCell = edit
+        ? `<input class="mm" type="number" step="0.1" data-mm="${p.id}" value="${v===null?'':v}" placeholder="mm">`
+        : `<div class="mmval">${v===null?'—':fmt(v,1)}</div>`;
+      html += `<div class="row">
+        <div class="lbl"><b>${p.label}</b><span class="file" title="${p.file}">${p.file}</span></div>
+        ${badge(p)}
+        ${valCell}
+        <div class="qty">
+          <button data-dec="${p.id}" title="−1">−</button>
+          <input type="number" min="0" step="1" data-qty="${p.id}" value="${state.qty[p.id]||0}">
+          <button data-inc="${p.id}" title="+1">+</button>
+        </div>
+      </div>`;
+    }
+  }
+  document.getElementById('catalog').innerHTML = html || '<div class="empty">Kein Treffer.</div>';
+}
+
+function renderPicked(){
+  const ids = Object.keys(state.qty).filter(id=>state.qty[id]>0 && byId[id]);
+  const box = document.getElementById('picked');
+  if(!ids.length){ box.innerHTML = '<div class="empty">Noch nichts ausgewählt.</div>'; return; }
+  let html='';
+  for(const id of ids){
+    const p = byId[id], q = state.qty[id], v = mmOf(p);
+    const sub = (v===null||Number.isNaN(v)) ? '–' : fmt(q*v,0)+' mm';
+    html += `<div class="pick">
+      <div><b>${q}×</b> ${p.label}<div class="sub2">${p.file}</div></div>
+      <div class="tot">${sub}</div>
+      <button data-del="${id}" title="Entfernen">✕</button>
+    </div>`;
+  }
+  box.innerHTML = html;
+}
+
+function renderSummary(){
+  let total=0, missing=0, missingNames=[];
+  for(const p of PARTS){
+    const q = state.qty[p.id]||0; if(!q) continue;
+    const v = mmOf(p);
+    if(v===null||Number.isNaN(v)){ missing+=q; missingNames.push(p.label); }
+    else total += q*v;
+  }
+  const strip = Math.max(0, Number(state.stripM)||0);
+  const stripMm = strip*1000;
+  document.getElementById('totalTxt').textContent = fmt(total/1000,2)+' m';
+  document.getElementById('mmTxt').textContent = fmt(total,0)+' mm'+(strip?' · Streifen '+fmt(strip,2)+' m':'');
+  const restEl = document.getElementById('restTxt');
+  if(stripMm>0 && total>0){
+    if(total<=stripMm) restEl.innerHTML = 'Noch <b>'+fmt((stripMm-total)/1000,2)+' m</b> übrig auf dem Streifen.';
+    else{
+      const rolls = Math.ceil(total/stripMm);
+      const last = rolls*stripMm - total;
+      restEl.innerHTML = 'Reicht nicht: <b>'+rolls+' Rollen</b> à '+fmt(strip,2)+' m nötig (nach der letzten bleiben '+fmt(last/1000,2)+' m übrig).';
+    }
+  } else restEl.textContent = '–';
+  document.getElementById('missTxt').innerHTML = missing
+    ? `<div class="warnline">${missing} Teil(e) ohne Maß: ${missingNames.join(', ')}</div>` : '';
+}
+
+function renderAll(){ renderCatalog(); renderPicked(); renderSummary(); save(); }
+
+/* ---- Events ---- */
+document.getElementById('catalog').addEventListener('click', e=>{
+  const t=e.target;
+  if(t.dataset.inc){ const id=t.dataset.inc; state.qty[id]=(state.qty[id]||0)+1; renderAll(); }
+  if(t.dataset.dec){ const id=t.dataset.dec; state.qty[id]=Math.max(0,(state.qty[id]||0)-1); renderAll(); }
+});
+document.getElementById('catalog').addEventListener('input', e=>{
+  const t=e.target;
+  if(t.dataset.qty){
+    const v=parseInt(t.value,10); state.qty[t.dataset.qty]=Number.isFinite(v)&&v>0?v:0; save(); renderPicked(); renderSummary();
+  }
+  if(t.dataset.mm){
+    const raw=t.value.trim();
+    if(raw==='') delete state.override[t.dataset.mm];
+    else { const n=Number(raw); if(Number.isFinite(n)) state.override[t.dataset.mm]=n; }
+    save(); renderPicked(); renderSummary();
+    const badgeRow = t.closest('.row').querySelector('.badge');
+    if(badgeRow) badgeRow.outerHTML = badge(byId[t.dataset.mm]);
+  }
+});
+document.getElementById('picked').addEventListener('click', e=>{
+  if(e.target.dataset.del){ delete state.qty[e.target.dataset.del]; renderAll(); }
+});
+document.getElementById('filter').addEventListener('input', renderCatalog);
+document.getElementById('editMode').addEventListener('change', e=>{ state.edit=e.target.checked; renderCatalog(); });
+document.getElementById('stripM').addEventListener('input', e=>{
+  const v=Number(e.target.value); state.stripM=Number.isFinite(v)&&v>=0?v:0; save(); renderSummary();
+});
+
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  if(!confirm('Auswahl, eigene Maße und Wandplaner wirklich zurücksetzen?')) return;
+  state={stripM:5,qty:{},override:{},edit:state.edit,tab:'list',plan:sanitizePlan(null)};
+  document.getElementById('stripM').value=5;
+  sel=null; undoStack=[];
+  syncPlanControls(); setTab('list');
+  renderAll(); toast('Zurückgesetzt');
+});
+
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  const data={
+    format:'duality-streifenrechner', version:1,
+    appVersion: APP_VERSION,
+    tab: state.tab,
+    stripM: state.stripM,
+    teile: Object.keys(state.qty).filter(id=>state.qty[id]>0).map(id=>({id, anzahl:state.qty[id], mm: mmOf(byId[id]) })),
+    eigeneMass: state.override,
+    plan: state.plan,
+    erzeugt: new Date().toISOString()
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='duality-streifenplan.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('JSON gespeichert');
+});
+
+document.getElementById('btnImport').addEventListener('click', ()=>document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      if(d.format!=='duality-streifenrechner') throw new Error('falsches Format');
+      state.qty={};
+      (d.teile||[]).forEach(t=>{ if(byId[t.id] && t.anzahl>0) state.qty[t.id]=Math.round(t.anzahl); });
+      state.override = d.eigeneMass && typeof d.eigeneMass==='object' ? d.eigeneMass : {};
+      state.stripM = typeof d.stripM==='number' ? d.stripM : 5;
+      state.plan = d.plan ? sanitizePlan(d.plan) : sanitizePlan(null);
+      document.getElementById('stripM').value=state.stripM;
+      syncPlanControls();
+      renderAll(); toast('Plan geladen');
+    }catch(err){ toast('Fehler: '+err.message); }
+  };
+  r.readAsText(f);
+  e.target.value='';
+});
+
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+/* ======================= Wandplaner ======================= */
+const SNAP_PX = 18, FREE_MM = 2.5, BAND_W = 35.8, MIN_STEP = 50, MAJ_STEP = 250;
+const CATCOL = {gerade:'#2f6feb', ende:'#6d4aff', kurve:'#0e7490',
+                hoehen:'#b54708', verbinder:'#1a7f37', vitality:'#c4320a'};
+
+let view = {k:0.1, panX:16, panY:16, fitted:false};
+let sel = null, drag = null, pan0 = null, undoStack = [], planSeq = 1;
+
+function sanitizePlan(pl){
+  const out = {wallW:4000, wallH:2500, grid:true, items:[]};
+  if(pl && typeof pl==='object'){
+    if(Number.isFinite(+pl.wallW) && +pl.wallW>=200) out.wallW = Math.min(50000, +pl.wallW);
+    if(Number.isFinite(+pl.wallH) && +pl.wallH>=200) out.wallH = Math.min(50000, +pl.wallH);
+    out.grid = pl.grid !== false;
+    const seen = new Set();
+    (Array.isArray(pl.items)?pl.items:[]).forEach(it=>{
+      if(!it || !byId[it.part]) return;
+      const x = +it.x, y = +it.y;
+      if(!Number.isFinite(x) || !Number.isFinite(y)) return;
+      let id = String(it.id||'');
+      if(!/^i\d+$/.test(id)) id = '';
+      while(!id || seen.has(id)) id = 'i' + (planSeq++);
+      seen.add(id);
+      out.items.push({id, part:it.part, x, y,
+        rot:norm360(Math.round((+it.rot||0)/45)*45), flip:!!it.flip});
+    });
+  }
+  out.items.forEach(it=>{
+    const n = parseInt(it.id.slice(1),10);
+    if(Number.isFinite(n) && n >= planSeq) planSeq = n+1;
+  });
+  return out;
+}
+function shOf(it){ const p = byId[it.part]; return shapeOf(p, mmOf(p)); }
+
+function pushUndo(){
+  undoStack.push(JSON.stringify(state.plan.items));
+  if(undoStack.length > 40) undoStack.shift();
+}
+function doUndo(){
+  if(!undoStack.length) return;
+  state.plan.items = JSON.parse(undoStack.pop());
+  if(sel && !state.plan.items.some(i=>i.id===sel)) sel = null;
+  save(); renderPlanPanels(); drawPlan();
+}
+
+const cv = document.getElementById('planCanvas');
+const ctx = cv.getContext('2d');
+let dpr = 1;
+function sizeCanvas(){
+  const r = cv.getBoundingClientRect();
+  dpr = window.devicePixelRatio || 1;
+  cv.width = Math.max(1, Math.round(r.width*dpr));
+  cv.height = Math.max(1, Math.round(r.height*dpr));
+}
+function X(x){ return view.panX + x*view.k; }
+function Y(y){ return view.panY + (state.plan.wallH - y)*view.k; }
+function toWorld(sx, sy){ return {x:(sx-view.panX)/view.k, y:state.plan.wallH-(sy-view.panY)/view.k}; }
+function cursorWorld(e){
+  const r = cv.getBoundingClientRect();
+  return toWorld(e.clientX-r.left, e.clientY-r.top);
+}
+function inCanvas(e){
+  const r = cv.getBoundingClientRect();
+  return e.clientX>=r.left && e.clientX<=r.right && e.clientY>=r.top && e.clientY<=r.bottom;
+}
+function fitView(){
+  const r = cv.getBoundingClientRect(), W = state.plan.wallW, H = state.plan.wallH, m = 30;
+  view.k = Math.max(0.001, Math.min((r.width-2*m)/W, (r.height-2*m)/H));
+  view.panX = (r.width - W*view.k)/2;
+  view.panY = (r.height - H*view.k)/2;
+  view.fitted = true;
+}
+function zoomAt(sx, sy, f){
+  const b = toWorld(sx, sy);
+  view.k = Math.min(4, Math.max(0.002, view.k*f));
+  view.panX = sx - b.x*view.k;
+  view.panY = sy - (state.plan.wallH - b.y)*view.k;
+}
+
+function bandPx(){ return Math.max(2, BAND_W*view.k); }
+function worldPts(it, pts){ return pts.map(q=>xfG(q[0], q[1], it.x, it.y, it.rot, it.flip)); }
+function pathScreen(world){
+  ctx.beginPath();
+  ctx.moveTo(X(world[0][0]), Y(world[0][1]));
+  for(let i=1; i<world.length; i++) ctx.lineTo(X(world[i][0]), Y(world[i][1]));
+}
+function drawItem(it, alpha, halo){
+  const sh = shOf(it), col = CATCOL[byId[it.part].cat] || '#2f6feb';
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if(halo){
+    ctx.strokeStyle = 'rgba(47,111,235,.35)'; ctx.lineWidth = bandPx()+7;
+    for(const pts of sh.paths){ pathScreen(worldPts(it, pts)); ctx.stroke(); }
+  }
+  ctx.strokeStyle = col; ctx.lineWidth = bandPx();
+  for(const pts of sh.paths){ pathScreen(worldPts(it, pts)); ctx.stroke(); }
+  ctx.restore();
+}
+function drawLabel(it){
+  if(bandPx() < 24) return;
+  const sh = shOf(it), pts = sh.paths[0];
+  const mid = pts[Math.floor(pts.length/2)];
+  const w = xfG(mid[0], mid[1], it.x, it.y, it.rot, it.flip);
+  ctx.save();
+  ctx.fillStyle = '#fff'; ctx.font = '600 11px system-ui,sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(byId[it.part].label, X(w[0]), Y(w[1]));
+  ctx.restore();
+}
+function drawGrid(){
+  const W = state.plan.wallW, H = state.plan.wallH;
+  const step = view.k*MIN_STEP >= 5 ? MIN_STEP : MAJ_STEP;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(X(0), Y(H), W*view.k, H*view.k); ctx.clip();
+  for(let x=0; x<=W+0.001; x+=step){
+    const major = Math.abs(x/MAJ_STEP - Math.round(x/MAJ_STEP)) < 1e-9;
+    if(step!==MIN_STEP && !major) continue;
+    ctx.strokeStyle = major ? '#d3d8de' : '#e7eaee'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(x), Y(0)); ctx.lineTo(X(x), Y(H)); ctx.stroke();
+  }
+  for(let y=0; y<=H+0.001; y+=step){
+    const major = Math.abs(y/MAJ_STEP - Math.round(y/MAJ_STEP)) < 1e-9;
+    if(step!==MIN_STEP && !major) continue;
+    ctx.strokeStyle = major ? '#d3d8de' : '#e7eaee'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(0), Y(y)); ctx.lineTo(X(W), Y(y)); ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawDims(){
+  const W = state.plan.wallW, H = state.plan.wallH;
+  ctx.save();
+  ctx.fillStyle = '#667085'; ctx.font = '12px system-ui,sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(fmt(W,0)+' mm', X(W/2), Y(H)-6);
+  ctx.translate(X(0)-6, Y(H/2)); ctx.rotate(-Math.PI/2);
+  ctx.fillText(fmt(H,0)+' mm', 0, 0);
+  ctx.restore();
+}
+function endpointWorldList(excludeId){
+  const list = [];
+  for(const it of state.plan.items){
+    if(it.id===excludeId) continue;
+    for(const s of snapPoints(shOf(it))){
+      const w = xfG(s.x, s.y, it.x, it.y, it.rot, it.flip);
+      list.push({x:w[0], y:w[1], dir:norm360((it.flip ? -s.dir : s.dir) + it.rot), owner:it.id, free:true});
+    }
+  }
+  for(const a of list)
+    a.free = !list.some(b => b!==a && Math.hypot(b.x-a.x, b.y-a.y) < FREE_MM);
+  return list;
+}
+function drawPlan(){
+  if(!cv.width) sizeCanvas();
+  const r = cv.getBoundingClientRect(), W = state.plan.wallW, H = state.plan.wallH;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,r.width,r.height);
+  ctx.fillStyle = '#eef0f3'; ctx.fillRect(0,0,r.width,r.height);
+  ctx.fillStyle = '#fff'; ctx.fillRect(X(0), Y(H), W*view.k, H*view.k);
+  if(state.plan.grid) drawGrid();
+  ctx.strokeStyle = '#c9ced6'; ctx.lineWidth = 1;
+  ctx.strokeRect(X(0)+.5, Y(H)+.5, W*view.k, H*view.k);
+  drawDims();
+
+  let targets = null;
+  if(drag && drag.ghost){
+    targets = endpointWorldList(drag.mode==='item' ? drag.id : null);
+  }
+  for(const it of state.plan.items){
+    if(drag && drag.mode==='item' && drag.id===it.id) continue;
+    drawItem(it, 1, it.id===sel);
+  }
+  if(drag && drag.ghost){
+    drawItem(drag.ghost, 0.55, false);
+    ctx.save();
+    if(targets) for(const t of targets){
+      if(!t.free) continue;
+      ctx.beginPath(); ctx.arc(X(t.x), Y(t.y), 4, 0, Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#2f6feb'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+    if(drag.snap){
+      ctx.beginPath(); ctx.arc(X(drag.snap.x), Y(drag.snap.y), 7, 0, Math.PI*2);
+      ctx.strokeStyle='#1a7f37'; ctx.lineWidth=3; ctx.stroke();
+    }
+    ctx.restore();
+  }
+  for(const it of state.plan.items){
+    if(drag && drag.mode==='item' && drag.id===it.id) continue;
+    drawLabel(it);
+  }
+  if(drag && drag.ghost) drawLabel(drag.ghost);
+
+  const selIt = state.plan.items.find(i=>i.id===sel);
+  if(selIt){
+    ctx.save();
+    ctx.fillStyle='#2f6feb'; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    for(const s of snapPoints(shOf(selIt))){
+      const w = xfG(s.x, s.y, selIt.x, selIt.y, selIt.rot, selIt.flip);
+      ctx.beginPath(); ctx.arc(X(w[0]), Y(w[1]), 4.5, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function distSeg(p, a, b){
+  const dx=b[0]-a[0], dy=b[1]-a[1], L2=dx*dx+dy*dy;
+  let t = L2 ? ((p.x-a[0])*dx + (p.y-a[1])*dy)/L2 : 0;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p.x-(a[0]+t*dx), p.y-(a[1]+t*dy));
+}
+function hitItem(w){
+  const band = BAND_W/2 + 2/view.k;
+  for(let i=state.plan.items.length-1; i>=0; i--){
+    const it = state.plan.items[i], sh = shOf(it);
+    for(const pts of sh.paths){
+      const wp = worldPts(it, pts);
+      for(let j=1; j<wp.length; j++) if(distSeg(w, wp[j-1], wp[j]) <= band) return it.id;
+    }
+  }
+  return null;
+}
+function makeGhostFromDrag(){
+  if(!drag || !drag.world){ if(drag) drag.ghost = null; return; }
+  const p = byId[drag.partId];
+  const sh = shapeOf(p, mmOf(p));
+  const g = {part:drag.partId, x:drag.world.x - drag.off.x, y:drag.world.y - drag.off.y,
+             rot:drag.rot, flip:drag.flip};
+  drag.snap = null;
+  if(!drag.noSnap){
+    const targets = endpointWorldList(drag.mode==='item' ? drag.id : null);
+    const best = pickSnap(targets, snapPoints(sh), g.rot, g.flip, g.x, g.y, SNAP_PX/view.k);
+    if(best){
+      g.rot = best.rot;
+      const e = snapPoints(sh)[best.ei];
+      const w0 = xfG(e.x, e.y, 0, 0, g.rot, g.flip);
+      g.x = best.x - w0[0]; g.y = best.y - w0[1];
+      drag.snap = best;
+    }
+  }
+  drag.ghost = g;
+}
+function rotateSel(d){
+  if(drag){ drag.rot = norm360(drag.rot+d); makeGhostFromDrag(); drawPlan(); return; }
+  const it = state.plan.items.find(i=>i.id===sel); if(!it) return;
+  pushUndo(); it.rot = norm360(it.rot+d); save(); renderPlanPanels(); drawPlan();
+}
+function flipSel(){
+  if(drag){ drag.flip = !drag.flip; makeGhostFromDrag(); drawPlan(); return; }
+  const it = state.plan.items.find(i=>i.id===sel); if(!it) return;
+  pushUndo(); it.flip = !it.flip; save(); renderPlanPanels(); drawPlan();
+}
+function delSel(){
+  const it = state.plan.items.find(i=>i.id===sel); if(!it) return;
+  pushUndo(); state.plan.items = state.plan.items.filter(i=>i.id!==sel); sel = null;
+  save(); renderPlanPanels(); drawPlan();
+}
+// Endpunkte eines Plan-Teils in Weltkoordinaten inkl. Link-Richtung (in das Teil hinein)
+function planEnds(it){
+  const sh = shapeOf(byId[it.part], mmOf(byId[it.part]));
+  return snapPoints(sh).map(e=>{
+    const w = xfG(e.x, e.y, it.x, it.y, it.rot, it.flip);
+    return {x:w[0], y:w[1], lx:e.x, ly:e.y, ldir:e.dir,
+      dir:norm360((it.flip ? -e.dir : e.dir) + it.rot)};
+  });
+}
+function planEndFree(it, end){
+  for(const o of state.plan.items){
+    if(o.id === it.id) continue;
+    for(const e of planEnds(o))
+      if(Math.hypot(e.x-end.x, e.y-end.y) < FREE_MM) return false;
+  }
+  return true;
+}
+function cloneSel(){
+  const it = state.plan.items.find(i=>i.id===sel); if(!it) return;
+  const ends = planEnds(it), entry = ends[0], exit = ends[1];
+  const append = exit && planEndFree(it, exit), prepend = !append && entry && planEndFree(it, entry);
+  let x, y, rot;
+  if(append){                                  // Kopie am Austritt ansetzen und tangential weiterlaufen
+    rot = norm360(exit.dir + 180);
+    x = exit.x; y = exit.y;
+  }else if(prepend){                           // sonst am freien Eintritt voranstellen
+    rot = norm360(entry.dir + 180 - (it.flip ? -exit.ldir : exit.ldir));
+    const w0 = xfG(exit.lx, exit.ly, 0, 0, rot, it.flip);
+    x = entry.x - w0[0]; y = entry.y - w0[1];
+  }else{                                       // beide Enden belegt: versetzt daneben
+    const a = (it.rot + 90) * Math.PI/180, off = 60;
+    rot = it.rot; x = it.x + off*Math.cos(a); y = it.y + off*Math.sin(a);
+  }
+  pushUndo();
+  const id = 'i' + (planSeq++);
+  state.plan.items.push({id, part:it.part, x, y, rot, flip:it.flip});
+  sel = id;
+  save(); renderPlanPanels(); drawPlan();
+}
+
+function exportPlanImage(){
+  if(!state.plan.items.length){ toast('Keine Teile im Plan.'); return; }
+  const old = {k:view.k, panX:view.panX, panY:view.panY, fitted:view.fitted};
+  fitView(); drawPlan();
+  const W = state.plan.wallW, H = state.plan.wallH;
+  const x0 = X(0), y0 = Y(H), w = W*view.k, h = H*view.k;
+  const out = document.createElement('canvas');
+  out.width = Math.max(1, Math.round(w*dpr)); out.height = Math.max(1, Math.round(h*dpr));
+  const g = out.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, out.width, out.height);
+  g.drawImage(cv, x0*dpr, y0*dpr, w*dpr, h*dpr, 0, 0, out.width, out.height);
+  view.k = old.k; view.panX = old.panX; view.panY = old.panY; view.fitted = old.fitted; drawPlan();
+  const a = document.createElement('a');
+  a.download = 'wandplaner-'+W+'x'+H+'mm.png';
+  a.href = out.toDataURL('image/png'); a.click();
+}
+
+function renderPal(){
+  const q = document.getElementById('palFilter').value.trim().toLowerCase();
+  let html = '';
+  for(const c of CATS){
+    const rows = PARTS.filter(p=>p.cat===c.id && (!q || (p.label+' '+p.file).toLowerCase().includes(q)));
+    for(const p of rows){
+      html += `<div class="palitem" data-part="${p.id}" title="${p.label} · ${p.file}">
+        <span class="dot" style="background:${CATCOL[p.cat]}"></span>
+        <span>${p.label}</span><span class="file2">${p.file}</span></div>`;
+    }
+  }
+  document.getElementById('palList').innerHTML = html || '<div class="empty">Kein Treffer.</div>';
+}
+function renderLegend(){
+  document.getElementById('legend').innerHTML = CATS.map(c=>
+    `<span><span class="dot" style="background:${CATCOL[c.id]}"></span>${c.label}</span>`).join('');
+}
+function renderPlanSum(){
+  const items = state.plan.items;
+  const el = document.getElementById('planSum');
+  if(!items.length){ el.innerHTML = '<div class="line">Noch keine Teile im Plan.</div>'; return; }
+  let total = 0, missing = 0;
+  for(const it of items){
+    const v = mmOf(byId[it.part]);
+    if(v===null||Number.isNaN(v)) missing++; else total += v;
+  }
+  el.innerHTML = `<div class="big">${fmt(total/1000,2)} m</div>
+    <div class="line">${items.length} Teil(e) · ${fmt(total,0)} mm Streifenlänge im Plan</div>`
+    + (missing ? `<div class="warnline">${missing} Teil(e) ohne Maß</div>` : '');
+}
+function renderInspector(){
+  const el = document.getElementById('inspector');
+  const it = state.plan.items.find(i=>i.id===sel);
+  if(!it){
+    el.innerHTML = '<h2>Objekt</h2><div class="empty">Kein Teil ausgewählt. Teil auf der Wand anklicken oder aus der Palette ziehen.</div>';
+    return;
+  }
+  const p = byId[it.part], v = mmOf(p);
+  el.innerHTML = `<h2>Objekt</h2>
+    <div class="irow"><span>Teil</span><b>${p.label}</b></div>
+    <div class="irow"><span>Datei</span><b style="font-weight:400;font-size:11px">${p.file}</b></div>
+    <div class="irow"><span>Streifenlänge</span><b>${(v===null||Number.isNaN(v))?'—':fmt(v,1)+' mm'}</b></div>
+    <div class="irow"><span>Position</span><b>${fmt(it.x,0)} / ${fmt(it.y,0)} mm</b></div>
+    <div class="irow"><span>Drehung</span><b>${fmt(it.rot,0)}°</b></div>
+    <div class="irow"><span>Spiegelung</span><b>${it.flip?'ja':'nein'}</b></div>
+    <div class="acts">
+      <button id="inspClone">Klonen</button>
+      <button id="inspRotM">Drehen −45°</button>
+      <button id="inspRot">Drehen +45°</button>
+      <button id="inspFlip">Spiegeln</button>
+      <button id="inspDel">Löschen</button>
+    </div>`;
+}
+function renderPlanPanels(){ renderInspector(); renderPlanSum(); }
+function syncPlanControls(){
+  document.getElementById('wallW').value = state.plan.wallW;
+  document.getElementById('wallH').value = state.plan.wallH;
+  document.getElementById('gridOn').checked = state.plan.grid;
+}
+function setTab(t){
+  state.tab = t==='plan' ? 'plan' : 'list';
+  document.getElementById('viewList').hidden = state.tab!=='list';
+  document.getElementById('viewPlan').hidden = state.tab!=='plan';
+  document.getElementById('tabList').classList.toggle('active', state.tab==='list');
+  document.getElementById('tabPlan').classList.toggle('active', state.tab==='plan');
+  if(state.tab==='plan'){
+    sizeCanvas();
+    if(!view.fitted) fitView();
+    renderPal(); renderLegend(); renderPlanPanels(); drawPlan();
+  }
+  save();
+}
+
+/* ---- Planer-Events ---- */
+document.getElementById('tabList').addEventListener('click', ()=>setTab('list'));
+document.getElementById('tabPlan').addEventListener('click', ()=>setTab('plan'));
+document.getElementById('palFilter').addEventListener('input', renderPal);
+document.getElementById('wallW').addEventListener('input', e=>{
+  const v = Number(e.target.value);
+  if(Number.isFinite(v) && v>=200){ state.plan.wallW = Math.min(50000, v); save(); drawPlan(); }
+});
+document.getElementById('wallH').addEventListener('input', e=>{
+  const v = Number(e.target.value);
+  if(Number.isFinite(v) && v>=200){ state.plan.wallH = Math.min(50000, v); save(); drawPlan(); }
+});
+document.getElementById('gridOn').addEventListener('change', e=>{ state.plan.grid = e.target.checked; save(); drawPlan(); });
+document.getElementById('btnFit').addEventListener('click', ()=>{ fitView(); drawPlan(); });
+document.getElementById('btnUndo').addEventListener('click', doUndo);
+document.getElementById('btnPlanImg').addEventListener('click', exportPlanImage);
+document.getElementById('btnPlanClear').addEventListener('click', ()=>{
+  if(!state.plan.items.length) return;
+  if(!confirm('Alle Teile aus dem Wandplaner entfernen?')) return;
+  pushUndo(); state.plan.items = []; sel = null; save(); renderPlanPanels(); drawPlan();
+});
+document.getElementById('btnAdopt').addEventListener('click', ()=>{
+  if(!state.plan.items.length){ toast('Keine Teile im Plan.'); return; }
+  if(!confirm('Plan als Stückliste übernehmen? Die aktuelle Auswahl in der Liste wird ersetzt.')) return;
+  const q = {};
+  for(const it of state.plan.items) q[it.part] = (q[it.part]||0)+1;
+  state.qty = q;
+  setTab('list'); renderAll(); toast('Stückliste übernommen');
+});
+document.getElementById('inspector').addEventListener('click', e=>{
+  if(e.target.id==='inspClone') cloneSel();
+  else if(e.target.id==='inspRotM') rotateSel(-45);
+  else if(e.target.id==='inspRot') rotateSel(45);
+  else if(e.target.id==='inspFlip') flipSel();
+  else if(e.target.id==='inspDel') delSel();
+});
+
+document.getElementById('palList').addEventListener('pointerdown', e=>{
+  const el = e.target.closest('.palitem');
+  if(!el) return;
+  e.preventDefault();
+  const partId = el.dataset.part;
+  const c = centroidOf(shapeOf(byId[partId], mmOf(byId[partId])));
+  drag = {mode:'palette', id:null, partId, rot:0, flip:false, off:{x:c.x, y:c.y},
+          world:null, moved:false, noSnap:e.shiftKey, start:{x:e.clientX, y:e.clientY}, ghost:null};
+  if(inCanvas(e)) drag.world = cursorWorld(e);
+  document.body.classList.add('dragging');
+  sel = null; renderPlanPanels(); drawPlan();
+});
+
+cv.addEventListener('pointerdown', e=>{
+  if(state.tab!=='plan') return;
+  const w = cursorWorld(e), hit = hitItem(w);
+  document.body.classList.add('dragging');
+  if(hit){
+    const it = state.plan.items.find(i=>i.id===hit);
+    sel = hit;
+    drag = {mode:'item', id:hit, partId:it.part, rot:it.rot, flip:it.flip,
+            off:{x:w.x-it.x, y:w.y-it.y}, world:w, moved:false, noSnap:e.shiftKey,
+            start:{x:e.clientX, y:e.clientY},
+            ghost:{part:it.part, x:it.x, y:it.y, rot:it.rot, flip:it.flip}};
+  } else {
+    pan0 = {sx:e.clientX, sy:e.clientY, px:view.panX, py:view.panY, moved:false};
+    drag = null;
+  }
+  renderPlanPanels(); drawPlan();
+});
+
+window.addEventListener('pointermove', e=>{
+  if(state.tab!=='plan') return;
+  if(pan0){
+    const dx = e.clientX-pan0.sx, dy = e.clientY-pan0.sy;
+    if(Math.abs(dx)>3 || Math.abs(dy)>3) pan0.moved = true;
+    if(pan0.moved){ view.panX = pan0.px+dx; view.panY = pan0.py+dy; view.fitted = false; drawPlan(); }
+    e.preventDefault(); return;
+  }
+  if(!drag) return;
+  if(!drag.moved && Math.hypot(e.clientX-drag.start.x, e.clientY-drag.start.y) > 4) drag.moved = true;
+  drag.noSnap = e.shiftKey;
+  if(drag.mode==='palette') drag.world = inCanvas(e) ? cursorWorld(e) : null;
+  else drag.world = cursorWorld(e);
+  makeGhostFromDrag();
+  drawPlan();
+  e.preventDefault();
+});
+
+window.addEventListener('pointerup', e=>{
+  if(state.tab!=='plan') return;
+  document.body.classList.remove('dragging');
+  if(pan0){
+    if(!pan0.moved){ sel = null; renderPlanPanels(); drawPlan(); }
+    pan0 = null; return;
+  }
+  if(!drag) return;
+  const d = drag; drag = null;
+  if(!d.moved || !inCanvas(e) || !d.ghost){ drawPlan(); renderPlanPanels(); return; }
+  pushUndo();
+  if(d.mode==='palette'){
+    const id = 'i' + (planSeq++);
+    state.plan.items.push({id, part:d.partId, x:d.ghost.x, y:d.ghost.y, rot:d.ghost.rot, flip:d.ghost.flip});
+    sel = id;
+  } else {
+    const it = state.plan.items.find(i=>i.id===d.id);
+    if(it){ it.x=d.ghost.x; it.y=d.ghost.y; it.rot=d.ghost.rot; it.flip=d.ghost.flip; }
+  }
+  save(); renderPlanPanels(); drawPlan();
+});
+window.addEventListener('pointercancel', ()=>{
+  drag = null; pan0 = null; document.body.classList.remove('dragging'); drawPlan();
+});
+
+cv.addEventListener('wheel', e=>{
+  if(state.tab!=='plan') return;
+  e.preventDefault();
+  const r = cv.getBoundingClientRect();
+  zoomAt(e.clientX-r.left, e.clientY-r.top, e.deltaY<0 ? 1.15 : 1/1.15);
+  view.fitted = false; drawPlan();
+}, {passive:false});
+
+document.addEventListener('keydown', e=>{
+  if(state.tab!=='plan') return;
+  if(e.target && e.target.matches && e.target.matches('input,textarea,select')) return;
+  if(e.key==='Escape'){ if(drag){ drag=null; document.body.classList.remove('dragging'); } else sel=null; drawPlan(); renderPlanPanels(); }
+  else if(e.key==='r'||e.key==='R'){ rotateSel(e.shiftKey ? -45 : 45); e.preventDefault(); }
+  else if(e.key==='f'||e.key==='F'){ flipSel(); e.preventDefault(); }
+  else if(e.key==='Delete'||e.key==='Backspace'){ delSel(); e.preventDefault(); }
+  else if((e.ctrlKey||e.metaKey) && (e.key==='d'||e.key==='D')){ cloneSel(); e.preventDefault(); }
+  else if((e.ctrlKey||e.metaKey) && (e.key==='z'||e.key==='Z')){ doUndo(); e.preventDefault(); }
+});
+
+window.addEventListener('resize', ()=>{ if(state.tab==='plan'){ sizeCanvas(); drawPlan(); } });
+
+load();
+document.getElementById('stripM').value=state.stripM;
+syncPlanControls();
+renderAll();
+renderChangelog();
+setTab(state.tab);
+</script>
+</body>
+</html>
