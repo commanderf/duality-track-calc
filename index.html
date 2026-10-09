@@ -18,6 +18,8 @@
   header.top{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
   h1{font-size:22px;margin:0 0 4px}
   .sub{color:var(--muted);font-size:13px}
+  .top-right{display:flex;align-items:center}
+  select.lang{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);cursor:pointer}
   .linkbox{margin-top:18px;font-size:13px}
   .linkbox h2{font-size:12px;margin:0 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .linkbox ul{margin:0;padding-left:18px}
@@ -109,36 +111,42 @@
 
   <header class="top">
     <div>
-      <h1>Duality LED Track – Streifenrechner</h1>
-      <div class="sub">Pfadlänge (Streifen-Mittellinie) aller Strip-führenden Track-Teile – ohne Reserve und ohne Schneidemarken.</div>
+      <h1 data-t="brandTitle">Duality LED Track – Streifenrechner</h1>
+      <div class="sub" data-t="sub">Pfadlänge (Streifen-Mittellinie) aller Strip-führenden Track-Teile – ohne Reserve und ohne Schneidemarken.</div>
       <div class="sub ver" id="appVersion"></div>
+    </div>
+    <div class="top-right">
+      <select class="lang" id="langSel" aria-label="Language">
+        <option value="de">Deutsch</option>
+        <option value="en">English</option>
+      </select>
     </div>
   </header>
 
   <div class="tabs">
-    <button class="tab active" id="tabList">Streifenliste</button>
-    <button class="tab" id="tabPlan">Wandplaner</button>
+    <button class="tab active" id="tabList" data-t="tabList">Streifenliste</button>
+    <button class="tab" id="tabPlan" data-t="tabPlan">Wandplaner</button>
   </div>
 
   <div class="grid" id="viewList">
 
     <section class="card">
-      <h2>Teile auswählen</h2>
+      <h2 data-t="selParts">Teile auswählen</h2>
       <div class="toolbar">
-        <input type="search" id="filter" placeholder="Suchen (z. B. 90, tangent, base) …">
+        <input type="search" id="filter" data-t-ph="filterPh" placeholder="Suchen (z. B. 90, tangent, base) …">
         <label style="font-size:13px;display:flex;gap:6px;align-items:center;white-space:nowrap">
-          <input type="checkbox" id="editMode"> Maße editieren
+          <input type="checkbox" id="editMode"> <span data-t="editLbl">Maße editieren</span>
         </label>
       </div>
       <div id="catalog"></div>
-      <div class="note">Zubehör ohne Strip (Skins, Splice-Blocks, Mounts, Light-Couplings) ist bewusst nicht enthalten.</div>
+      <div class="note" data-t="catNote">Zubehör ohne Strip (Skins, Splice-Blocks, Mounts, Light-Couplings) ist bewusst nicht enthalten.</div>
     </section>
 
     <aside class="card">
-      <h2>Auswahl &amp; Auswertung</h2>
+      <h2 data-t="pickedH2">Auswahl &amp; Auswertung</h2>
 
       <div class="field">
-        <label for="stripM">Verfügbare Streifenlänge (m)</label>
+        <label for="stripM" data-t="stripLbl">Verfügbare Streifenlänge (m)</label>
         <input type="number" id="stripM" min="0" step="0.1" value="5">
       </div>
 
@@ -152,45 +160,42 @@
       </div>
 
       <div class="actions">
-        <button class="primary" id="btnExport">JSON speichern</button>
-        <button id="btnImport">JSON laden</button>
-        <button id="btnReset">Zurücksetzen</button>
+        <button class="primary" id="btnExport" data-t="btnExport">JSON speichern</button>
+        <button id="btnImport" data-t="btnImport">JSON laden</button>
+        <button id="btnReset" data-t="btnReset">Zurücksetzen</button>
         <input type="file" id="fileInput" accept="application/json,.json" hidden>
       </div>
-      <div class="note">Der Plan wird automatisch im Browser gespeichert. Mit „JSON speichern“ als Datei exportieren und später wieder laden.</div>
+      <div class="note" data-t="saveNote">Der Plan wird automatisch im Browser gespeichert. Mit „JSON speichern“ als Datei exportieren und später wieder laden.</div>
     </aside>
 
   </div>
 
   <section class="card" id="viewPlan" hidden>
-    <h2>Wandplaner</h2>
+    <h2 data-t="planH2">Wandplaner</h2>
     <div class="pgrid">
 
       <div class="pal">
-        <input type="search" id="palFilter" placeholder="Teile suchen (z. B. 90, tangent) …">
+        <input type="search" id="palFilter" data-t-ph="palPh" placeholder="Teile suchen (z. B. 90, tangent) …">
         <div class="paclist" id="palList"></div>
       </div>
 
       <div class="pmain">
         <div class="toolbar">
-          <label style="font-size:13px;display:flex;gap:6px;align-items:center">Wand
+          <label style="font-size:13px;display:flex;gap:6px;align-items:center"><span data-t="wallLbl">Wand</span>
             <input class="mm" type="number" id="wallW" min="200" step="50" style="width:80px"> ×
             <input class="mm" type="number" id="wallH" min="200" step="50" style="width:80px"> mm
           </label>
           <label style="font-size:13px;display:flex;gap:6px;align-items:center;white-space:nowrap">
-            <input type="checkbox" id="gridOn" checked> Raster
+            <input type="checkbox" id="gridOn" checked> <span data-t="gridLbl">Raster</span>
           </label>
-          <button id="btnFit">Ansicht einpassen</button>
-          <button id="btnUndo">Rückgängig</button>
-          <button id="btnPlanImg">Bild speichern</button>
-          <button id="btnPlanClear">Plan leeren</button>
-          <button class="primary" id="btnAdopt">Plan als Stückliste</button>
+          <button id="btnFit" data-t="btnFit">Ansicht einpassen</button>
+          <button id="btnUndo" data-t="btnUndo">Rückgängig</button>
+          <button id="btnPlanImg" data-t="btnPlanImg">Bild speichern</button>
+          <button id="btnPlanClear" data-t="btnPlanClear">Plan leeren</button>
+          <button class="primary" id="btnAdopt" data-t="btnAdopt">Plan als Stückliste</button>
         </div>
         <canvas id="planCanvas"></canvas>
-        <div class="hint">Teil aus der Palette auf die Wand ziehen. Magnet rastet an freien Endpunkten ein
-          (<b>Shift</b> = ohne Magnet). Tasten: <b>R</b>/<b>Shift+R</b> drehen, <b>F</b> spiegeln,
-          <b>Entf</b> löschen, <b>Strg+Z</b> rückgängig. Leerer Bereich: Ziehen = verschieben, Klick = Auswahl aufheben,
-          Mausrad = Zoom. Am Tablet: Klonen, Drehen (±45°), Spiegeln und Löschen über die Knöpfe im Inspector.</div>
+        <div class="hint" data-t="hint">Teil aus der Palette auf die Wand ziehen. Magnet rastet an freien Endpunkten ein (<b>Shift</b> = ohne Magnet). Tasten: <b>R</b>/<b>Shift+R</b> drehen, <b>F</b> spiegeln, <b>Entf</b> löschen, <b>Strg+Z</b> rückgängig. Leerer Bereich: Ziehen = verschieben, Klick = Auswahl aufheben, Mausrad = Zoom. Am Tablet: Klonen, Drehen (±45°), Spiegeln und Löschen über die Knöpfe im Inspector.</div>
         <div class="sum" id="planSum"></div>
         <div class="legend" id="legend"></div>
       </div>
@@ -200,15 +205,10 @@
     </div>
   </section>
 
-  <footer>
-    Berechnung: Länge der Linie, auf der der Streifen im Kanal liegt. Gerade = Nennmaß aus dem Dateinamen,
-    Kurven/Winkelteile = gemessene Pfadlänge aus der STL-Geometrie. Teile ohne Wert („Maß fehlt“) gehen nicht in die Summe ein.
-    Im Wandplaner werden die Teile schematisch als Mittellinie (Kern des Kanals) mit 35,8 mm Bandbreite gezeichnet;
-    die Längen für die Auswertung liefert weiterhin die Liste (Streifen-Mittellinie), nicht das gezeichnete Band.
-  </footer>
+  <footer data-t="foot">Berechnung: Länge der Linie, auf der der Streifen im Kanal liegt. Gerade Teile = Nennmaß aus dem Dateinamen; Kurven/Winkelteile = Rundungswerte anhand von Radius und Winkel. Teile ohne Wert („Maß fehlt“) gehen nicht in die Summe ein. Im Wandplaner werden die Teile schematisch als Mittellinie (Kern des Kanals) mit 35,8 mm Bandbreite gezeichnet; die Längen für die Auswertung liefert weiterhin die Liste (Streifen-Mittellinie), nicht das gezeichnete Band.</footer>
 
   <section class="linkbox" id="links">
-    <h2>Links</h2>
+    <h2 data-t="linksH2">Links</h2>
     <ul>
       <li><a href="https://www.printables.com/model/1637420-duality-track-system-bundle-original-track-and-evo" target="_blank" rel="noopener">Duality Track System Bundle – Original Track and Evolution Pack</a></li>
       <li><a href="https://www.printables.com/model/1365700-duality-led-track-system" target="_blank" rel="noopener">Track System (Original)</a></li>
@@ -219,7 +219,7 @@
   </section>
 
   <details class="changelog" id="changelogBox">
-    <summary>Änderungen (Changelog)</summary>
+    <summary data-t="changelogSummary">Änderungen (Changelog)</summary>
     <div id="changelog"></div>
   </details>
 </div>
@@ -236,6 +236,104 @@ const CATS = [
   {id:'vitality',  label:'Vitality (Evolution)'}
 ];
 
+// Zweisprachige UI: DE/EN. `state.lang` ('de'|'en') wird gespeichert.
+const EN_CAT = {
+  gerade:'Straights', ende:'Ends, Base & Intermediate', kurve:'Curves 45°/90°',
+  hoehen:'Height changes (up/down)', verbinder:'Tee & Cross', vitality:'Vitality (Evolution)'
+};
+const EN_LABEL = {
+  curve_45_150:'Curve 45° (150)', curve_45_250:'Curve 45° (250)',
+  curve_90_150:'Curve 90° (150)', curve_90_250:'Curve 90° (250)'
+};
+const I18N = {
+  de: {
+    brandTitle:'Duality LED Track – Streifenrechner',
+    sub:'Pfadlänge (Streifen-Mittellinie) aller Strip-führenden Track-Teile – ohne Reserve und ohne Schneidemarken.',
+    versionLabel:'Version {0}',
+    tabList:'Streifenliste', tabPlan:'Wandplaner',
+    selParts:'Teile auswählen', filterPh:'Suchen (z. B. 90, tangent, base) …',
+    editLbl:'Maße editieren',
+    catNote:'Zubehör ohne Strip (Skins, Splice-Blocks, Mounts, Light-Couplings) ist bewusst nicht enthalten.',
+    pickedH2:'Auswahl & Auswertung', stripLbl:'Verfügbare Streifenlänge (m)',
+    btnExport:'JSON speichern', btnImport:'JSON laden', btnReset:'Zurücksetzen',
+    saveNote:'Der Plan wird automatisch im Browser gespeichert. Mit „JSON speichern“ als Datei exportieren und später wieder laden.',
+    planH2:'Wandplaner', palPh:'Teile suchen (z. B. 90, tangent) …',
+    wallLbl:'Wand', gridLbl:'Raster',
+    btnFit:'Ansicht einpassen', btnUndo:'Rückgängig', btnPlanImg:'Bild speichern',
+    btnPlanClear:'Plan leeren', btnAdopt:'Plan als Stückliste',
+    hint:'Teil aus der Palette auf die Wand ziehen. Magnet rastet an freien Endpunkten ein (<b>Shift</b> = ohne Magnet). Tasten: <b>R</b>/<b>Shift+R</b> drehen, <b>F</b> spiegeln, <b>Entf</b> löschen, <b>Strg+Z</b> rückgängig. Leerer Bereich: Ziehen = verschieben, Klick = Auswahl aufheben, Mausrad = Zoom. Am Tablet: Klonen, Drehen (±45°), Spiegeln und Löschen über die Knöpfe im Inspector.',
+    foot:'Berechnung: Länge der Linie, auf der der Streifen im Kanal liegt. Gerade Teile = Nennmaß aus dem Dateinamen; Kurven/Winkelteile = Rundungswerte anhand von Radius und Winkel. Teile ohne Wert („Maß fehlt“) gehen nicht in die Summe ein. Im Wandplaner werden die Teile schematisch als Mittellinie (Kern des Kanals) mit 35,8 mm Bandbreite gezeichnet; die Längen für die Auswertung liefert weiterhin die Liste (Streifen-Mittellinie), nicht das gezeichnete Band.',
+    linksH2:'Links', changelogSummary:'Änderungen (Changelog)',
+    noMatch:'Kein Treffer.', pickedEmpty:'Noch nichts ausgewählt.', del:'Entfernen',
+    badgeMiss:'Maß fehlt', badgeOwn:'eigener Wert', badgeRounded:'Rundung', badgeNominal:'Nennwert', badgeTmp:'vorläufig',
+    stripOf:' · Streifen {0} m',
+    restLeft:'Noch <b>{0} m</b> übrig auf dem Streifen.',
+    restNeed:'Reicht nicht: <b>{0} Rollen</b> à {1} m nötig (nach der letzten bleiben {2} m übrig).',
+    partsNoDim:'{0} Teil(e) ohne Maß: {1}',
+    planEmpty:'Noch keine Teile im Plan.',
+    planSumLine:'{0} Teil(e) · {1} mm Streifenlänge im Plan',
+    partsNoDimWarn:'{0} Teil(e) ohne Maß',
+    inspTitle:'Objekt',
+    inspEmpty:'Kein Teil ausgewählt. Teil auf der Wand anklicken oder aus der Palette ziehen.',
+    inspPart:'Teil', inspFile:'Datei', inspLen:'Streifenlänge', inspPos:'Position',
+    inspRot:'Drehung', inspFlip:'Spiegelung', yes:'ja', no:'nein',
+    inspClone:'Klonen', inspRotM:'Drehen −45°', inspRotP:'Drehen +45°', inspFlipBtn:'Spiegeln', inspDel:'Löschen',
+    confirmReset:'Auswahl, eigene Maße und Wandplaner wirklich zurücksetzen?',
+    confirmClear:'Alle Teile aus dem Wandplaner entfernen?',
+    confirmAdopt:'Plan als Stückliste übernehmen? Die aktuelle Auswahl in der Liste wird ersetzt.',
+    toastReset:'Zurückgesetzt', toastSaved:'JSON gespeichert', toastLoaded:'Plan geladen',
+    toastErr:'Fehler: {0}', errFormat:'falsches Format', toastNoParts:'Keine Teile im Plan.',
+    toastAdopted:'Stückliste übernommen'
+  },
+  en: {
+    brandTitle:'Duality LED Track – Strip Calculator',
+    sub:'Path length (strip centre line) of all strip-carrying track parts – no reserve, no cut marks.',
+    versionLabel:'Version {0}',
+    tabList:'Strip list', tabPlan:'Wall planner',
+    selParts:'Select parts', filterPh:'Search (e.g. 90, tangent, base)…',
+    editLbl:'Edit dimensions',
+    catNote:'Accessories without a strip (skins, splice blocks, mounts, light couplings) are intentionally not included.',
+    pickedH2:'Selection & result', stripLbl:'Available strip length (m)',
+    btnExport:'Save JSON', btnImport:'Load JSON', btnReset:'Reset',
+    saveNote:'The plan is saved automatically in the browser. Use “Save JSON” to export it to a file and load it again later.',
+    planH2:'Wall planner', palPh:'Search parts (e.g. 90, tangent)…',
+    wallLbl:'Wall', gridLbl:'Grid',
+    btnFit:'Fit view', btnUndo:'Undo', btnPlanImg:'Save image',
+    btnPlanClear:'Clear plan', btnAdopt:'Adopt as parts list',
+    hint:'Drag a part from the palette onto the wall. The magnet snaps to free endpoints (<b>Shift</b> = no magnet). Keys: <b>R</b>/<b>Shift+R</b> rotate, <b>F</b> flip, <b>Del</b> delete, <b>Ctrl+Z</b> undo. Empty area: drag = pan, click = deselect, mouse wheel = zoom. On tablets: clone, rotate (±45°), flip and delete via the buttons in the inspector.',
+    foot:'Calculation: length of the line on which the strip sits in the channel. Straight parts = nominal dimension from the file name; curved/angled parts = rounded values based on radius and angle. Parts without a value (missing dimension) are not included in the sum. In the wall planner, parts are drawn schematically as a centre line (core of the channel) with a 35.8 mm strip width; the lengths for the result come from the list (strip centre line), not from the drawn band.',
+    linksH2:'Links', changelogSummary:'Changes (changelog)',
+    noMatch:'No match.', pickedEmpty:'Nothing selected yet.', del:'Remove',
+    badgeMiss:'Missing dimension', badgeOwn:'custom value', badgeRounded:'rounded', badgeNominal:'nominal', badgeTmp:'provisional',
+    stripOf:' · Strip {0} m',
+    restLeft:'<b>{0} m</b> left on the strip.',
+    restNeed:'Not enough: <b>{0} roll(s)</b> of {1} m needed ({2} m left after the last one).',
+    partsNoDim:'{0} part(s) without dimension: {1}',
+    planEmpty:'No parts in the plan yet.',
+    planSumLine:'{0} part(s) · {1} mm strip length in the plan',
+    partsNoDimWarn:'{0} part(s) without dimension',
+    inspTitle:'Object',
+    inspEmpty:'No part selected. Click a part on the wall or drag one from the palette.',
+    inspPart:'Part', inspFile:'File', inspLen:'Strip length', inspPos:'Position',
+    inspRot:'Rotation', inspFlip:'Mirroring', yes:'yes', no:'no',
+    inspClone:'Clone', inspRotM:'Rotate −45°', inspRotP:'Rotate +45°', inspFlipBtn:'Flip', inspDel:'Delete',
+    confirmReset:'Really reset the selection, custom dimensions and wall plan?',
+    confirmClear:'Remove all parts from the wall plan?',
+    confirmAdopt:'Adopt the plan as parts list? The current selection in the list will be replaced.',
+    toastReset:'Reset', toastSaved:'JSON saved', toastLoaded:'Plan loaded',
+    toastErr:'Error: {0}', errFormat:'wrong format', toastNoParts:'No parts in the plan.',
+    toastAdopted:'Parts list adopted'
+  }
+};
+function t(key, ...args){
+  let s = (I18N[state.lang] || I18N.de)[key];
+  if(s === undefined) s = I18N.de[key] || key;
+  args.forEach((a, i)=>{ s = s.split('{'+i+'}').join(String(a)); });
+  return s;
+}
+function labelOf(p){ return state.lang === 'en' ? (EN_LABEL[p.id] || p.label) : p.label; }
+function catLabel(c){ return state.lang === 'en' ? (EN_CAT[c.id] || c.label) : c.label; }
+
 // Versionierung (SemVer + Kanal-Suffix); oberster Eintrag == APP_VERSION, prüft check.js.
 const APP_VERSION = '0.2.0-alpha';
 const CHANGELOG = [
@@ -248,10 +346,26 @@ const CHANGELOG = [
     'Wandplan als PNG exportieren („Bild speichern", auf die Wand zugeschnitten)',
     'Links (Bundle, Einzelprojekte, Designer) als Abschnitt unten auf der Seite; die Kopfzeilen-Links sind dorthin gewandert',
     'Wandplan in localStorage und JSON-Export/-Import; Export markiert die App-Version',
-    'Behoben: Wandplaner-Tab zeigte die Streifenliste darüber; Ziehen aus der Palette war per Touch nicht möglich'
+    'Behoben: Wandplaner-Tab zeigte die Streifenliste darüber; Ziehen aus der Palette war per Touch nicht möglich',
+    'Benutzeroberfläche zweisprachig (Deutsch/English, Umschalter oben rechts); Längen-Badges als Nennwert/Rundung dargestellt'
+  ],
+  itemsEn:[
+    'Wall planner as second tab: drag & drop parts onto a wall, to-scale strips (35.8 mm), wall dimensions and 50 mm grid',
+    'Magnet snapping to free endpoints (45° grid), Shift disables the magnet',
+    'Rotate (R/Shift+R), flip (F), delete (Del), undo (Ctrl+Z), zoom/pan, inspector, “adopt plan as parts list”',
+    'Rotate in both directions in the inspector (+45° and −45°) – also for tablets without a keyboard',
+    'Clone selected part: attached at the free end and continues tangentially (same direction for straights; button in the inspector or Ctrl+D)',
+    'Export wall plan as PNG (“Save image”, cropped to the wall)',
+    'Links (bundle, individual projects, designer) as a section at the bottom of the page; the header links moved there',
+    'Wall plan in localStorage and JSON export/import; the export marks the app version',
+    'Fixed: the wall planner tab showed the strip list above it; dragging from the palette was not possible via touch',
+    'The user interface is now bilingual (German/English, toggle in the top right); length badges are shown as nominal/rounded'
   ]},
   {version:'0.1.0', date:'2026-10-08', items:[
     'Erste Version: Streifenrechner aller 56 strip-führenden Teile mit Pfadlänge, Auswahl, Summe/Rollen-Rest, JSON-Export/-Import'
+  ],
+  itemsEn:[
+    'First version: strip calculator for all 56 strip-carrying parts with path length, selection, sum/roll remainder, JSON export/import'
   ]}
 ];
 function verLabel(v){
@@ -260,12 +374,14 @@ function verLabel(v){
 }
 function renderChangelog(){
   const verEl = document.getElementById('appVersion');
-  if(verEl) verEl.textContent = 'Version ' + verLabel(APP_VERSION);
+  if(verEl) verEl.textContent = t('versionLabel', verLabel(APP_VERSION));
   const el = document.getElementById('changelog');
   if(!el) return;
-  el.innerHTML = CHANGELOG.map(e=>
-    `<h4>v${e.version} <time>${e.date}</time></h4><ul>` +
-    e.items.map(i=>`<li>${i}</li>`).join('') + '</ul>').join('');
+  el.innerHTML = CHANGELOG.map(e=>{
+    const items = (state.lang === 'en' && Array.isArray(e.itemsEn)) ? e.itemsEn : e.items;
+    return `<h4>v${e.version} <time>${e.date}</time></h4><ul>` +
+      items.map(i=>`<li>${i}</li>`).join('') + '</ul>';
+  }).join('');
 }
 
 const P = (id,label,cat,file,mm,src) => ({id,label,cat,file,mm:mm===undefined?null:mm,src:src||'offen'});
@@ -451,7 +567,7 @@ function pickSnap(targets, mine, rot, flip, ox, oy, radius){
 // </geo>
 
 const STORE = 'duality-streifenrechner-v1';
-let state = {stripM:5, qty:{}, override:{}, edit:false, tab:'list', plan:null};
+let state = {stripM:5, qty:{}, override:{}, edit:false, tab:'list', plan:null, lang:'de'};
 
 function load(){
   try{
@@ -462,26 +578,28 @@ function load(){
         state.qty = s.qty && typeof s.qty==='object' ? s.qty : {};
         state.override = s.override && typeof s.override==='object' ? s.override : {};
         state.tab = s.tab === 'plan' ? 'plan' : 'list';
+        state.lang = (s.lang === 'en' || s.lang === 'de') ? s.lang : 'de';
         state.plan = sanitizePlan(s.plan);
       }
     }
   }catch(e){}
+  if(!state.lang) state.lang = (navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en';
   if(!state.plan) state.plan = sanitizePlan(null);
 }
 function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
 
 const byId = Object.fromEntries(PARTS.map(p=>[p.id,p]));
 function mmOf(p){ const o = state.override[p.id]; return (o===undefined||o===null||o==='') ? p.mm : Number(o); }
-function fmt(n,d){ return n.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function fmt(n,d){ return n.toLocaleString(state.lang==='en' ? 'en-US' : 'de-DE',{minimumFractionDigits:d,maximumFractionDigits:d}); }
 
 function badge(p){
   const v = mmOf(p);
-  if(v===null || Number.isNaN(v)) return '<span class="badge miss">Maß fehlt</span>';
+  if(v===null || Number.isNaN(v)) return '<span class="badge miss">'+t('badgeMiss')+'</span>';
   if(state.override[p.id]!==undefined && state.override[p.id]!==null && state.override[p.id]!=='')
-    return '<span class="badge est">eigener Wert</span>';
-  if(p.src==='stl') return '<span class="badge ok">aus STL</span>';
-  if(p.src==='name') return '<span class="badge ok">aus Name</span>';
-  return '<span class="badge est">vorläufig</span>';
+    return '<span class="badge est">'+t('badgeOwn')+'</span>';
+  if(p.src==='stl') return '<span class="badge ok">'+t('badgeRounded')+'</span>';
+  if(p.src==='name') return '<span class="badge ok">'+t('badgeNominal')+'</span>';
+  return '<span class="badge est">'+t('badgeTmp')+'</span>';
 }
 
 function renderCatalog(){
@@ -490,16 +608,16 @@ function renderCatalog(){
   let html = '';
   for(const c of CATS){
     const rows = PARTS.filter(p=>p.cat===c.id &&
-      (!q || (p.label+' '+p.file).toLowerCase().includes(q)));
+      (!q || (labelOf(p)+' '+p.file).toLowerCase().includes(q)));
     if(!rows.length) continue;
-    html += `<div class="cat">${c.label}</div>`;
+    html += `<div class="cat">${catLabel(c)}</div>`;
     for(const p of rows){
       const v = mmOf(p);
       const valCell = edit
         ? `<input class="mm" type="number" step="0.1" data-mm="${p.id}" value="${v===null?'':v}" placeholder="mm">`
         : `<div class="mmval">${v===null?'—':fmt(v,1)}</div>`;
       html += `<div class="row">
-        <div class="lbl"><b>${p.label}</b><span class="file" title="${p.file}">${p.file}</span></div>
+        <div class="lbl"><b>${labelOf(p)}</b><span class="file" title="${p.file}">${p.file}</span></div>
         ${badge(p)}
         ${valCell}
         <div class="qty">
@@ -510,21 +628,21 @@ function renderCatalog(){
       </div>`;
     }
   }
-  document.getElementById('catalog').innerHTML = html || '<div class="empty">Kein Treffer.</div>';
+  document.getElementById('catalog').innerHTML = html || '<div class="empty">'+t('noMatch')+'</div>';
 }
 
 function renderPicked(){
   const ids = Object.keys(state.qty).filter(id=>state.qty[id]>0 && byId[id]);
   const box = document.getElementById('picked');
-  if(!ids.length){ box.innerHTML = '<div class="empty">Noch nichts ausgewählt.</div>'; return; }
+  if(!ids.length){ box.innerHTML = '<div class="empty">'+t('pickedEmpty')+'</div>'; return; }
   let html='';
   for(const id of ids){
     const p = byId[id], q = state.qty[id], v = mmOf(p);
     const sub = (v===null||Number.isNaN(v)) ? '–' : fmt(q*v,0)+' mm';
     html += `<div class="pick">
-      <div><b>${q}×</b> ${p.label}<div class="sub2">${p.file}</div></div>
+      <div><b>${q}×</b> ${labelOf(p)}<div class="sub2">${p.file}</div></div>
       <div class="tot">${sub}</div>
-      <button data-del="${id}" title="Entfernen">✕</button>
+      <button data-del="${id}" title="${t('del')}">✕</button>
     </div>`;
   }
   box.innerHTML = html;
@@ -535,24 +653,24 @@ function renderSummary(){
   for(const p of PARTS){
     const q = state.qty[p.id]||0; if(!q) continue;
     const v = mmOf(p);
-    if(v===null||Number.isNaN(v)){ missing+=q; missingNames.push(p.label); }
+    if(v===null||Number.isNaN(v)){ missing+=q; missingNames.push(labelOf(p)); }
     else total += q*v;
   }
   const strip = Math.max(0, Number(state.stripM)||0);
   const stripMm = strip*1000;
   document.getElementById('totalTxt').textContent = fmt(total/1000,2)+' m';
-  document.getElementById('mmTxt').textContent = fmt(total,0)+' mm'+(strip?' · Streifen '+fmt(strip,2)+' m':'');
+  document.getElementById('mmTxt').textContent = fmt(total,0)+' mm'+(strip? t('stripOf', fmt(strip,2)) : '');
   const restEl = document.getElementById('restTxt');
   if(stripMm>0 && total>0){
-    if(total<=stripMm) restEl.innerHTML = 'Noch <b>'+fmt((stripMm-total)/1000,2)+' m</b> übrig auf dem Streifen.';
+    if(total<=stripMm) restEl.innerHTML = t('restLeft', fmt((stripMm-total)/1000,2));
     else{
       const rolls = Math.ceil(total/stripMm);
       const last = rolls*stripMm - total;
-      restEl.innerHTML = 'Reicht nicht: <b>'+rolls+' Rollen</b> à '+fmt(strip,2)+' m nötig (nach der letzten bleiben '+fmt(last/1000,2)+' m übrig).';
+      restEl.innerHTML = t('restNeed', rolls, fmt(strip,2), fmt(last/1000,2));
     }
   } else restEl.textContent = '–';
   document.getElementById('missTxt').innerHTML = missing
-    ? `<div class="warnline">${missing} Teil(e) ohne Maß: ${missingNames.join(', ')}</div>` : '';
+    ? `<div class="warnline">${t('partsNoDim', missing, missingNames.join(', '))}</div>` : '';
 }
 
 function renderAll(){ renderCatalog(); renderPicked(); renderSummary(); save(); }
@@ -587,12 +705,12 @@ document.getElementById('stripM').addEventListener('input', e=>{
 });
 
 document.getElementById('btnReset').addEventListener('click', ()=>{
-  if(!confirm('Auswahl, eigene Maße und Wandplaner wirklich zurücksetzen?')) return;
-  state={stripM:5,qty:{},override:{},edit:state.edit,tab:'list',plan:sanitizePlan(null)};
+  if(!confirm(t('confirmReset'))) return;
+  state={stripM:5,qty:{},override:{},edit:state.edit,tab:'list',plan:sanitizePlan(null),lang:state.lang};
   document.getElementById('stripM').value=5;
   sel=null; undoStack=[];
   syncPlanControls(); setTab('list');
-  renderAll(); toast('Zurückgesetzt');
+  renderAll(); toast(t('toastReset'));
 });
 
 document.getElementById('btnExport').addEventListener('click', ()=>{
@@ -611,7 +729,7 @@ document.getElementById('btnExport').addEventListener('click', ()=>{
   a.href=URL.createObjectURL(blob);
   a.download='duality-streifenplan.json';
   a.click(); URL.revokeObjectURL(a.href);
-  toast('JSON gespeichert');
+  toast(t('toastSaved'));
 });
 
 document.getElementById('btnImport').addEventListener('click', ()=>document.getElementById('fileInput').click());
@@ -621,7 +739,7 @@ document.getElementById('fileInput').addEventListener('change', e=>{
   r.onload=()=>{
     try{
       const d=JSON.parse(r.result);
-      if(d.format!=='duality-streifenrechner') throw new Error('falsches Format');
+      if(d.format!=='duality-streifenrechner') throw new Error(t('errFormat'));
       state.qty={};
       (d.teile||[]).forEach(t=>{ if(byId[t.id] && t.anzahl>0) state.qty[t.id]=Math.round(t.anzahl); });
       state.override = d.eigeneMass && typeof d.eigeneMass==='object' ? d.eigeneMass : {};
@@ -629,8 +747,8 @@ document.getElementById('fileInput').addEventListener('change', e=>{
       state.plan = d.plan ? sanitizePlan(d.plan) : sanitizePlan(null);
       document.getElementById('stripM').value=state.stripM;
       syncPlanControls();
-      renderAll(); toast('Plan geladen');
-    }catch(err){ toast('Fehler: '+err.message); }
+      renderAll(); toast(t('toastLoaded'));
+    }catch(err){ toast(t('toastErr', err.message)); }
   };
   r.readAsText(f);
   e.target.value='';
@@ -751,7 +869,7 @@ function drawLabel(it){
   ctx.save();
   ctx.fillStyle = '#fff'; ctx.font = '600 11px system-ui,sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(byId[it.part].label, X(w[0]), Y(w[1]));
+  ctx.fillText(labelOf(byId[it.part]), X(w[0]), Y(w[1]));
   ctx.restore();
 }
 function drawGrid(){
@@ -942,7 +1060,7 @@ function cloneSel(){
 }
 
 function exportPlanImage(){
-  if(!state.plan.items.length){ toast('Keine Teile im Plan.'); return; }
+  if(!state.plan.items.length){ toast(t('toastNoParts')); return; }
   const old = {k:view.k, panX:view.panX, panY:view.panY, fitted:view.fitted};
   fitView(); drawPlan();
   const W = state.plan.wallW, H = state.plan.wallH;
@@ -962,56 +1080,70 @@ function renderPal(){
   const q = document.getElementById('palFilter').value.trim().toLowerCase();
   let html = '';
   for(const c of CATS){
-    const rows = PARTS.filter(p=>p.cat===c.id && (!q || (p.label+' '+p.file).toLowerCase().includes(q)));
+    const rows = PARTS.filter(p=>p.cat===c.id && (!q || (labelOf(p)+' '+p.file).toLowerCase().includes(q)));
     for(const p of rows){
-      html += `<div class="palitem" data-part="${p.id}" title="${p.label} · ${p.file}">
+      html += `<div class="palitem" data-part="${p.id}" title="${labelOf(p)} · ${p.file}">
         <span class="dot" style="background:${CATCOL[p.cat]}"></span>
-        <span>${p.label}</span><span class="file2">${p.file}</span></div>`;
+        <span>${labelOf(p)}</span><span class="file2">${p.file}</span></div>`;
     }
   }
-  document.getElementById('palList').innerHTML = html || '<div class="empty">Kein Treffer.</div>';
+  document.getElementById('palList').innerHTML = html || '<div class="empty">'+t('noMatch')+'</div>';
 }
 function renderLegend(){
   document.getElementById('legend').innerHTML = CATS.map(c=>
-    `<span><span class="dot" style="background:${CATCOL[c.id]}"></span>${c.label}</span>`).join('');
+    `<span><span class="dot" style="background:${CATCOL[c.id]}"></span>${catLabel(c)}</span>`).join('');
 }
 function renderPlanSum(){
   const items = state.plan.items;
   const el = document.getElementById('planSum');
-  if(!items.length){ el.innerHTML = '<div class="line">Noch keine Teile im Plan.</div>'; return; }
+  if(!items.length){ el.innerHTML = '<div class="line">'+t('planEmpty')+'</div>'; return; }
   let total = 0, missing = 0;
   for(const it of items){
     const v = mmOf(byId[it.part]);
     if(v===null||Number.isNaN(v)) missing++; else total += v;
   }
   el.innerHTML = `<div class="big">${fmt(total/1000,2)} m</div>
-    <div class="line">${items.length} Teil(e) · ${fmt(total,0)} mm Streifenlänge im Plan</div>`
-    + (missing ? `<div class="warnline">${missing} Teil(e) ohne Maß</div>` : '');
+    <div class="line">${t('planSumLine', items.length, fmt(total,0))}</div>`
+    + (missing ? `<div class="warnline">${t('partsNoDimWarn', missing)}</div>` : '');
 }
 function renderInspector(){
   const el = document.getElementById('inspector');
   const it = state.plan.items.find(i=>i.id===sel);
   if(!it){
-    el.innerHTML = '<h2>Objekt</h2><div class="empty">Kein Teil ausgewählt. Teil auf der Wand anklicken oder aus der Palette ziehen.</div>';
+    el.innerHTML = '<h2>'+t('inspTitle')+'</h2><div class="empty">'+t('inspEmpty')+'</div>';
     return;
   }
   const p = byId[it.part], v = mmOf(p);
-  el.innerHTML = `<h2>Objekt</h2>
-    <div class="irow"><span>Teil</span><b>${p.label}</b></div>
-    <div class="irow"><span>Datei</span><b style="font-weight:400;font-size:11px">${p.file}</b></div>
-    <div class="irow"><span>Streifenlänge</span><b>${(v===null||Number.isNaN(v))?'—':fmt(v,1)+' mm'}</b></div>
-    <div class="irow"><span>Position</span><b>${fmt(it.x,0)} / ${fmt(it.y,0)} mm</b></div>
-    <div class="irow"><span>Drehung</span><b>${fmt(it.rot,0)}°</b></div>
-    <div class="irow"><span>Spiegelung</span><b>${it.flip?'ja':'nein'}</b></div>
+  el.innerHTML = `<h2>${t('inspTitle')}</h2>
+    <div class="irow"><span>${t('inspPart')}</span><b>${labelOf(p)}</b></div>
+    <div class="irow"><span>${t('inspFile')}</span><b style="font-weight:400;font-size:11px">${p.file}</b></div>
+    <div class="irow"><span>${t('inspLen')}</span><b>${(v===null||Number.isNaN(v))?'—':fmt(v,1)+' mm'}</b></div>
+    <div class="irow"><span>${t('inspPos')}</span><b>${fmt(it.x,0)} / ${fmt(it.y,0)} mm</b></div>
+    <div class="irow"><span>${t('inspRot')}</span><b>${fmt(it.rot,0)}°</b></div>
+    <div class="irow"><span>${t('inspFlip')}</span><b>${it.flip?t('yes'):t('no')}</b></div>
     <div class="acts">
-      <button id="inspClone">Klonen</button>
-      <button id="inspRotM">Drehen −45°</button>
-      <button id="inspRot">Drehen +45°</button>
-      <button id="inspFlip">Spiegeln</button>
-      <button id="inspDel">Löschen</button>
+      <button id="inspClone">${t('inspClone')}</button>
+      <button id="inspRotM">${t('inspRotM')}</button>
+      <button id="inspRot">${t('inspRotP')}</button>
+      <button id="inspFlip">${t('inspFlipBtn')}</button>
+      <button id="inspDel">${t('inspDel')}</button>
     </div>`;
 }
 function renderPlanPanels(){ renderInspector(); renderPlanSum(); }
+function applyLang(){
+  if(document.documentElement) document.documentElement.lang = state.lang;
+  document.title = t('brandTitle');
+  if(document.querySelectorAll){
+    document.querySelectorAll('[data-t]').forEach(el=>{ el.innerHTML = t(el.dataset.t); });
+    document.querySelectorAll('[data-t-ph]').forEach(el=>{ el.placeholder = t(el.dataset.tPh); });
+  }
+  document.getElementById('langSel').value = state.lang;
+  renderChangelog(); renderAll(); renderLegend(); renderPlanPanels(); drawPlan();
+}
+document.getElementById('langSel').addEventListener('change', e=>{
+  state.lang = e.target.value === 'en' ? 'en' : 'de';
+  save(); applyLang();
+});
 function syncPlanControls(){
   document.getElementById('wallW').value = state.plan.wallW;
   document.getElementById('wallH').value = state.plan.wallH;
@@ -1049,16 +1181,16 @@ document.getElementById('btnUndo').addEventListener('click', doUndo);
 document.getElementById('btnPlanImg').addEventListener('click', exportPlanImage);
 document.getElementById('btnPlanClear').addEventListener('click', ()=>{
   if(!state.plan.items.length) return;
-  if(!confirm('Alle Teile aus dem Wandplaner entfernen?')) return;
+  if(!confirm(t('confirmClear'))) return;
   pushUndo(); state.plan.items = []; sel = null; save(); renderPlanPanels(); drawPlan();
 });
 document.getElementById('btnAdopt').addEventListener('click', ()=>{
-  if(!state.plan.items.length){ toast('Keine Teile im Plan.'); return; }
-  if(!confirm('Plan als Stückliste übernehmen? Die aktuelle Auswahl in der Liste wird ersetzt.')) return;
+  if(!state.plan.items.length){ toast(t('toastNoParts')); return; }
+  if(!confirm(t('confirmAdopt'))) return;
   const q = {};
   for(const it of state.plan.items) q[it.part] = (q[it.part]||0)+1;
   state.qty = q;
-  setTab('list'); renderAll(); toast('Stückliste übernommen');
+  setTab('list'); renderAll(); toast(t('toastAdopted'));
 });
 document.getElementById('inspector').addEventListener('click', e=>{
   if(e.target.id==='inspClone') cloneSel();
@@ -1164,10 +1296,10 @@ document.addEventListener('keydown', e=>{
 window.addEventListener('resize', ()=>{ if(state.tab==='plan'){ sizeCanvas(); drawPlan(); } });
 
 load();
+document.getElementById('langSel').value = state.lang;
+applyLang();
 document.getElementById('stripM').value=state.stripM;
 syncPlanControls();
-renderAll();
-renderChangelog();
 setTab(state.tab);
 </script>
 </body>

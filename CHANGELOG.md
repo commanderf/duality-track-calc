@@ -17,6 +17,7 @@ Derselbe Changelog ist in der App unter „Änderungen" eingeblendet.
 
 ### Geändert
 - Links (Bundle, Einzelprojekte, Designer) als eigener Abschnitt unten auf der Seite; die früheren Kopfzeilen-Links sind entfallen
+- Benutzeroberfläche zweisprachig (Deutsch/English, Umschalter oben rechts); Längen-Badges als Nennwert/Rundung dargestellt
 
 ### Behoben
 - Wandplaner-Tab zeigte die Streifenliste darüber (`hidden` wurde von `.grid{display:grid}` überstimmt)

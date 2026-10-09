@@ -19,6 +19,8 @@ export/import for backup.
 - **Bill of materials** – turn the wall plan into the quantity table with one
   click.
 - **JSON export/import** – save or restore the whole configuration.
+- **Bilingual UI** – switch the interface between German and English at any
+  time.
 
 ## Usage
 
@@ -28,9 +30,9 @@ export/import for backup.
 
 ## Notes and disclaimer
 
-- Path lengths are calculated from the part names and the provided STL data.
-  Values for a few families may deviate by a small amount – please verify
-  before ordering material.
+- Lengths are derived from the nominal dimensions in the part file names; for
+  curved parts the values are rounded values based on the given radius and
+  angle. Values may deviate slightly – please verify before ordering material.
 - The wall planner draws a schematic center line of each track part.
 - Not affiliated with the designer of the track system – see below.
 
@@ -50,12 +52,6 @@ projects:
   <https://www.printables.com/model/1637201-duality-evolution-pack>
 - Skins (Creative Commons):
   <https://www.printables.com/model/1365694-creative-commons-duality-led-track-system-skins>
-
-## Versioning
-
-The app version (`APP_VERSION`, SemVer with a channel suffix such as
-`-alpha`) is shown in the app footer. The history is kept in the in-app
-"Changes" panel and mirrored in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## License
 
@@ -88,6 +84,8 @@ Sichern/Wiederherstellen per JSON-Export/-Import.
 - **Stückliste** – den Wandplan mit einem Klick in die Mengentabelle
   übernehmen.
 - **JSON-Export/-Import** – die gesamte Konfiguration sichern/wiederherstellen.
+- **Zweisprachige Oberfläche** – die Bedienoberfläche jederzeit zwischen
+  Deutsch und English umschalten.
 
 ## Nutzung
 
@@ -97,9 +95,10 @@ Sichern/Wiederherstellen per JSON-Export/-Import.
 
 ## Hinweise und Haftung
 
-- Die Pfadlängen werden aus den Dateinamen und den bereitgestellten STL-Daten
-  berechnet. Bei einigen Familien können die Werte geringfügig abweichen –
-  bitte vor der Materialbestellung prüfen.
+- Die Längen werden aus den Nennmaßen der Dateinamen abgeleitet; bei
+  gebogenen Teilen handelt es sich um Rundungswerte anhand von Radius und
+  Winkel. Die Werte können geringfügig abweichen – bitte vor der
+  Materialbestellung prüfen.
 - Der Wandplaner zeichnet eine schematische Mittellinie je Track-Teil.
 - Kein Zusammenhang mit dem Designer des Systems – siehe unten.
 
@@ -118,12 +117,6 @@ Tracks (Original und Evo); die Tracks gibt es auch als einzelne Projekte:
   <https://www.printables.com/model/1637201-duality-evolution-pack>
 - Skins (Creative Commons):
   <https://www.printables.com/model/1365694-creative-commons-duality-led-track-system-skins>
-
-## Versionierung
-
-Die App-Version (`APP_VERSION`, SemVer mit Kanal-Suffix, z. B. `-alpha`)
-steht im Footer der App. Die Historie liegt im „Änderungen"-Bereich der App
-und gespiegelt in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lizenz
 
